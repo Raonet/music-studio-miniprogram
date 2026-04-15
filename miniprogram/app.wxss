@@ -1,0 +1,13 @@
+page {
+  background-color: #1A1A1F;
+  color: #F0EDE6;
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
+  box-sizing: border-box;
+}
+
+/* Common */
+.gold { color: #C9A84C; }
+.text-secondary { color: #A89F8C; }
+.text-primary { color: #F0EDE6; }
+.card-bg { background-color: #22222A; }
+.border-default { border: 1rpx solid #2E2D35; }

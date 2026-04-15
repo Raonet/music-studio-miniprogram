@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "reminder-modal": "../../components/reminder-modal/index"
+  },
+  "navigationStyle": "custom"
+}

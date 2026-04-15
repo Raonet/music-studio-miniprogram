@@ -1,0 +1,85 @@
+<navbar title="课程表" showBack="{{false}}"></navbar>
+
+<view class="page">
+  <!-- 月份切换 -->
+  <view class="month-header">
+    <view class="month-btn" bindtap="prevMonth">
+      <image class="month-arrow" src="/assets/icons/chevron-left-gold.svg" mode="aspectFit" />
+    </view>
+    <text class="month-title">{{year}}年{{month}}月</text>
+    <view class="month-btn" bindtap="nextMonth">
+      <image class="month-arrow" src="/assets/icons/chevron-right-gold.svg" mode="aspectFit" />
+    </view>
+  </view>
+
+  <!-- 日历 -->
+  <view class="calendar">
+    <!-- 星期标题行 -->
+    <view class="cal-week-row">
+      <view wx:for="{{weekLabels}}" wx:key="*this" class="cal-header-cell">
+        <text class="cal-header-text">{{item}}</text>
+      </view>
+    </view>
+    <!-- 日期网格 -->
+    <view class="cal-grid">
+      <view
+        wx:for="{{calDays}}"
+        wx:key="index"
+        class="cal-cell"
+        bindtap="selectCalDay"
+        data-date="{{item.dateStr}}"
+        data-type="{{item.type}}"
+      >
+        <view class="{{item.wrapClass}}">
+          <text class="{{item.textClass}}">{{item.date}}</text>
+        </view>
+        <view class="cal-dot-row">
+          <view wx:if="{{item.hasLesson && item.type === 'current'}}" class="{{item.dotClass}}"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 选中日期标题 -->
+  <view wx:if="{{selectedDate}}" class="date-section-header">
+    <view class="date-section-bar"></view>
+    <text class="date-section-text">{{selectedDateLabel}}</text>
+  </view>
+
+  <!-- 课程卡片列表 -->
+  <view class="lesson-list">
+    <view wx:for="{{lessons}}" wx:key="id" class="lesson-card">
+      <view class="gold-bar"></view>
+      <view class="lesson-body">
+        <view class="time-pill">
+          <text class="time-text">{{item.time}}</text>
+        </view>
+        <text class="course-name">{{item.course}}</text>
+        <view class="lesson-footer">
+          <view class="teacher-info">
+            <view class="teacher-avatar">
+              <text class="teacher-avatar-text">{{item.teacherAvatar}}</text>
+            </view>
+            <text class="teacher-name">{{item.teacher}}</text>
+          </view>
+          <view class="room-tag">
+            <image class="room-icon" src="/assets/icons/map-pin-secondary.svg" mode="aspectFit" />
+            <text class="room-text">{{item.room}}</text>
+          </view>
+          <view class="status-badge">
+            <text class="status-text">{{item.status}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{selectedDate && lessons.length === 0}}" class="no-lesson">
+      <text class="no-lesson-text">当天无课程安排</text>
+    </view>
+    <view wx:if="{{!selectedDate}}" class="no-lesson">
+      <text class="no-lesson-text">请选择日期查看课程</text>
+    </view>
+  </view>
+
+  <view class="tab-bar-placeholder"></view>
+</view>

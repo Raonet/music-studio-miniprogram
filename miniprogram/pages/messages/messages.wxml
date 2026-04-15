@@ -1,0 +1,9 @@
+<navbar title="消息" showBack="{{false}}"></navbar>
+<view class="page">
+  <view class="empty-state">
+    <view class="empty-glow"></view>
+    <image class="empty-icon" src="/assets/icons/message-square-gold.svg" mode="aspectFit" />
+    <text class="empty-text">暂无消息</text>
+  </view>
+  <view class="tab-bar-placeholder"></view>
+</view>

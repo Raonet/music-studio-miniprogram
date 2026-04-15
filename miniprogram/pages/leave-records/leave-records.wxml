@@ -1,0 +1,52 @@
+<navbar title="请假记录"></navbar>
+
+<view class="page">
+  <!-- 筛选 Tabs -->
+  <view class="tabs">
+    <view
+      wx:for="{{tabs}}"
+      wx:key="*this"
+      class="tab-item"
+      bindtap="setTab"
+      data-tab="{{item}}"
+    >
+      <text class="tab-text {{activeTab === item ? 'tab-text-active' : ''}}">{{item}}</text>
+      <view wx:if="{{activeTab === item}}" class="tab-underline"></view>
+    </view>
+  </view>
+
+  <!-- 记录列表 -->
+  <view class="record-list">
+    <view wx:for="{{filteredRecords}}" wx:key="id" class="record-card">
+      <view class="gold-bar"></view>
+      <view class="record-body">
+        <view class="record-top">
+          <view class="record-left">
+            <text class="record-course">{{item.course}}</text>
+            <view class="record-date-row">
+              <image class="calendar-icon" src="/assets/icons/calendar-gold.svg" mode="aspectFit" />
+              <text class="record-date">请假日期：{{item.leaveDate}}</text>
+            </view>
+          </view>
+          <view class="status-chip status-{{item.statusKey}}">
+            <text class="status-text">{{item.status}}</text>
+          </view>
+        </view>
+        <view class="record-reason">
+          <text class="reason-text">{{item.reason}}</text>
+        </view>
+        <view class="record-bottom">
+          <text class="submitted-text">提交于 {{item.submittedAt}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view wx:if="{{filteredRecords.length === 0}}" class="empty-state">
+      <image class="empty-icon" src="/assets/icons/file-text-gold.svg" mode="aspectFit" />
+      <text class="empty-text">暂无请假记录</text>
+    </view>
+  </view>
+
+  <view class="tab-bar-placeholder"></view>
+</view>

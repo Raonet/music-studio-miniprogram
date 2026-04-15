@@ -1,0 +1,226 @@
+.page {
+  background-color: #1A1A1F;
+  min-height: 100vh;
+}
+
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: 48rpx;
+  padding: 32rpx 48rpx;
+  border-bottom: 1rpx solid #2E2D35;
+}
+
+.tab-item {
+  position: relative;
+  padding-bottom: 16rpx;
+}
+
+.tab-text {
+  font-size: 28rpx;
+  color: #A89F8C;
+}
+
+.tab-text-active {
+  color: #C9A84C;
+}
+
+.tab-underline {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4rpx;
+  background-color: #C9A84C;
+  border-radius: 4rpx;
+}
+
+.record-list {
+  padding: 48rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 32rpx;
+  padding-bottom: 200rpx;
+}
+
+.record-card {
+  background-color: #22222A;
+  border-radius: 32rpx;
+  border: 1rpx solid #2E2D35;
+  overflow: hidden;
+  display: flex;
+  box-shadow: 0 8rpx 32rpx rgba(0,0,0,0.4);
+}
+
+.gold-bar {
+  width: 8rpx;
+  background: linear-gradient(180deg, #E2C07A, #C9A84C);
+  flex-shrink: 0;
+}
+
+.record-body {
+  flex: 1;
+  padding: 40rpx 40rpx 40rpx 32rpx;
+}
+
+.record-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 24rpx;
+}
+
+.record-left {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.record-course {
+  font-size: 32rpx;
+  color: #F0EDE6;
+  font-weight: 500;
+}
+
+.record-date-row {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.clock-icon {
+  width: 24rpx;
+  height: 24rpx;
+}
+
+.record-date {
+  font-size: 24rpx;
+  color: #A89F8C;
+}
+
+.status-chip {
+  padding: 8rpx 24rpx;
+  border-radius: 100rpx;
+  display: flex;
+  align-items: center;
+}
+
+.status-chip.status-completed {
+  background-color: rgba(76,175,125,0.2);
+}
+
+.status-chip.status-leave {
+  background-color: rgba(90,85,80,0.2);
+}
+
+.status-chip.status-makeup {
+  background-color: rgba(226,168,76,0.2);
+}
+
+.status-text {
+  font-size: 22rpx;
+}
+
+.status-chip.status-completed .status-text { color: #4CAF7D; }
+.status-chip.status-leave .status-text { color: #A89F8C; }
+.status-chip.status-makeup .status-text { color: #E2A84C; }
+
+.record-bottom {
+  display: flex;
+  align-items: center;
+  gap: 32rpx;
+}
+
+.teacher-chip {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.teacher-avatar-sm {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #C9A84C, #8B6914);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.teacher-avatar-text {
+  font-size: 20rpx;
+  color: #1A1A1F;
+  font-weight: 600;
+}
+
+.teacher-name {
+  font-size: 24rpx;
+  color: #A89F8C;
+}
+
+.duration-chip {
+  padding: 8rpx 20rpx;
+  border-radius: 100rpx;
+  background-color: #1A1A1F;
+  border: 1rpx solid #2E2D35;
+}
+
+.duration-text {
+  font-size: 22rpx;
+  color: #A89F8C;
+}
+
+/* Summary bar */
+.summary-bar {
+  position: fixed;
+  bottom: 112rpx;
+  left: 0;
+  right: 0;
+  background-color: #22222A;
+  border-top: 1rpx solid #2E2D35;
+  display: flex;
+  align-items: center;
+  padding: 32rpx 48rpx;
+  box-shadow: 0 -8rpx 32rpx rgba(0,0,0,0.3);
+}
+
+.summary-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.summary-label {
+  font-size: 24rpx;
+  color: #A89F8C;
+}
+
+.summary-value-row {
+  display: flex;
+  align-items: baseline;
+  gap: 4rpx;
+}
+
+.summary-num {
+  font-size: 40rpx;
+  color: #C9A84C;
+  font-family: monospace;
+  font-weight: 700;
+}
+
+.summary-unit {
+  font-size: 28rpx;
+  color: #C9A84C;
+}
+
+.summary-divider {
+  width: 2rpx;
+  height: 64rpx;
+  background-color: #2E2D35;
+}
+
+.tab-bar-placeholder {
+  height: 130rpx;
+}

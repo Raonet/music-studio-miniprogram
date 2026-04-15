@@ -1,0 +1,75 @@
+<navbar title="请假申请"></navbar>
+
+<view class="page">
+  <!-- 表单卡片 -->
+  <view class="form-card">
+    <view class="gold-top-bar"></view>
+    <view class="form-body">
+      <!-- 选择课程 -->
+      <view class="form-item">
+        <text class="form-label">选择课程</text>
+        <picker bindchange="onCourseChange" value="{{courseIndex}}" range="{{courses}}">
+          <view class="picker-wrap">
+            <text class="picker-text {{selectedCourse ? '' : 'placeholder'}}">
+              {{selectedCourse || '请选择要请假的课程'}}
+            </text>
+            <image class="picker-arrow" src="/assets/icons/chevron-down-secondary.svg" mode="aspectFit" />
+          </view>
+        </picker>
+      </view>
+
+      <!-- 请假日期 -->
+      <view class="form-item">
+        <text class="form-label">请假日期</text>
+        <picker mode="date" bindchange="onDateChange" value="{{selectedDate}}">
+          <view class="picker-wrap">
+            <text class="picker-text {{selectedDate ? '' : 'placeholder'}}">
+              {{selectedDate || '请选择请假日期'}}
+            </text>
+            <image class="picker-icon" src="/assets/icons/calendar-gold.svg" mode="aspectFit" />
+          </view>
+        </picker>
+      </view>
+
+      <!-- 请假原因 -->
+      <view class="form-item">
+        <text class="form-label">请假原因</text>
+        <textarea
+          class="reason-input"
+          value="{{reason}}"
+          bindinput="onReasonInput"
+          placeholder="请简要说明请假原因..."
+          placeholder-class="textarea-placeholder"
+          maxlength="200"
+          auto-height
+        ></textarea>
+      </view>
+    </view>
+  </view>
+
+  <!-- 请假须知 -->
+  <view class="policy-card">
+    <view class="policy-header">
+      <view class="info-icon-wrap">
+        <image class="info-icon" src="/assets/icons/info-gold.svg" mode="aspectFit" />
+      </view>
+      <text class="policy-title">请假须知</text>
+    </view>
+    <view class="policy-list">
+      <view wx:for="{{policies}}" wx:key="index" class="policy-item">
+        <text class="policy-num">{{index + 1}}.</text>
+        <text class="policy-text">{{item}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 提交按钮 -->
+  <view
+    class="submit-btn {{canSubmit ? '' : 'submit-btn-disabled'}}"
+    bindtap="handleSubmit"
+  >
+    <text class="submit-text">提交申请</text>
+  </view>
+
+  <view class="tab-bar-placeholder"></view>
+</view>

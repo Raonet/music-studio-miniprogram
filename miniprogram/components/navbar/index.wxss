@@ -1,0 +1,39 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(26, 26, 31, 0.9);
+  border-bottom: 1rpx solid #2E2D35;
+  z-index: 100;
+}
+
+.navbar-inner {
+  height: 112rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 0 32rpx;
+}
+
+.back-btn {
+  position: absolute;
+  left: 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60rpx;
+  height: 60rpx;
+}
+
+.back-icon {
+  width: 44rpx;
+  height: 44rpx;
+}
+
+.navbar-title {
+  font-size: 32rpx;
+  color: #F0EDE6;
+  font-weight: 500;
+}

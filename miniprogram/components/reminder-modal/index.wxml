@@ -1,0 +1,34 @@
+<view wx:if="{{isOpen}}" class="modal-mask" bindtap="onClose">
+  <view class="modal-content" catchtap="">
+    <view class="modal-close" bindtap="onClose">
+      <image class="close-icon" src="/assets/icons/x-secondary.svg" mode="aspectFit" />
+    </view>
+
+    <view class="music-icon-wrap">
+      <view class="music-glow"></view>
+      <view class="music-icon-circle">
+        <image class="music-icon" src="/assets/icons/music-dark.svg" mode="aspectFit" />
+      </view>
+    </view>
+
+    <view class="lesson-info">
+      <text class="lesson-title">钢琴进阶课</text>
+      <text class="lesson-date">2026年4月16日 15:00</text>
+      <text class="lesson-teacher">授课老师：李老师</text>
+    </view>
+
+    <view class="countdown-box">
+      <text class="countdown-label">距离上课</text>
+      <text class="countdown-time">{{countdownTime}}</text>
+    </view>
+
+    <view class="modal-actions">
+      <view class="btn-outline" bindtap="onClose">
+        <text>联系老师</text>
+      </view>
+      <view class="btn-gold" bindtap="onClose">
+        <text>已知晓</text>
+      </view>
+    </view>
+  </view>
+</view>

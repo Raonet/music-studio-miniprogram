@@ -1,0 +1,284 @@
+.page {
+  background-color: #1A1A1F;
+  min-height: 100vh;
+  padding: 0 48rpx;
+}
+
+.month-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 40rpx 0 32rpx;
+}
+
+.month-btn {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.month-arrow {
+  width: 44rpx;
+  height: 44rpx;
+}
+
+.month-title {
+  font-size: 36rpx;
+  color: #F0EDE6;
+  font-weight: 500;
+}
+
+/* ── 日历 ── */
+.calendar {
+  margin-bottom: 40rpx;
+}
+
+.cal-week-row {
+  display: flex;
+  margin-bottom: 8rpx;
+}
+
+.cal-header-cell {
+  flex: 0 0 14.285714%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 12rpx;
+}
+
+.cal-header-text {
+  font-size: 24rpx;
+  color: #5A5550;
+}
+
+.cal-grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.cal-cell {
+  flex: 0 0 14.285714%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6rpx 0;
+}
+
+/* 日期圆圈容器 */
+.cal-date-wrap {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cal-date-selected-bg {
+  background-color: #C9A84C;
+}
+
+.cal-date-today-bg {
+  border: 2rpx solid rgba(201,168,76,0.6);
+}
+
+/* 日期数字 */
+.cal-date-text {
+  font-size: 28rpx;
+  color: #F0EDE6;
+  line-height: 1;
+}
+
+.cal-date-dim {
+  color: #2E2D35;
+}
+
+.cal-date-active {
+  color: #1A1A1F;
+  font-weight: 700;
+}
+
+.cal-date-today {
+  color: #C9A84C;
+  font-weight: 600;
+}
+
+/* 课程小圆点 */
+.cal-dot-row {
+  height: 12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cal-dot {
+  width: 8rpx;
+  height: 8rpx;
+  border-radius: 50%;
+  background-color: #C9A84C;
+}
+
+.cal-dot-dim {
+  background-color: rgba(201,168,76,0.4);
+}
+
+/* ── 选中日期标题 ── */
+.date-section-header {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 24rpx;
+}
+
+.date-section-bar {
+  width: 6rpx;
+  height: 32rpx;
+  border-radius: 6rpx;
+  background: linear-gradient(180deg, #E2C07A, #C9A84C);
+}
+
+.date-section-text {
+  font-size: 28rpx;
+  color: #A89F8C;
+}
+
+/* ── 课程卡片 ── */
+.lesson-list {
+  display: flex;
+  flex-direction: column;
+  gap: 32rpx;
+}
+
+.lesson-card {
+  background-color: #22222A;
+  border-radius: 32rpx;
+  border: 1rpx solid #2E2D35;
+  overflow: hidden;
+  box-shadow: 0 8rpx 32rpx rgba(0,0,0,0.4);
+  display: flex;
+  flex-direction: row;
+}
+
+.gold-bar {
+  width: 8rpx;
+  background: linear-gradient(180deg, #E2C07A, #C9A84C);
+  flex-shrink: 0;
+}
+
+.lesson-body {
+  flex: 1;
+  padding: 40rpx 40rpx 40rpx 32rpx;
+}
+
+.time-pill {
+  display: flex;
+  align-items: center;
+  align-self: flex-start;
+  padding: 10rpx 24rpx;
+  border-radius: 100rpx;
+  background-color: rgba(201,168,76,0.1);
+  border: 1rpx solid rgba(201,168,76,0.3);
+  margin-bottom: 20rpx;
+}
+
+.time-text {
+  font-size: 24rpx;
+  color: #C9A84C;
+  font-family: monospace;
+}
+
+.course-name {
+  font-size: 36rpx;
+  color: #F0EDE6;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 24rpx;
+}
+
+.lesson-footer {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  flex-wrap: wrap;
+}
+
+.teacher-info {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.teacher-avatar {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #C9A84C, #8B6914);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.teacher-avatar-text {
+  font-size: 22rpx;
+  color: #1A1A1F;
+  font-weight: 600;
+}
+
+.teacher-name {
+  font-size: 28rpx;
+  color: #F0EDE6;
+}
+
+.room-tag {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 8rpx 20rpx;
+  border-radius: 100rpx;
+  background-color: #1A1A1F;
+  border: 1rpx solid #2E2D35;
+}
+
+.room-icon {
+  width: 24rpx;
+  height: 24rpx;
+}
+
+.room-text {
+  font-size: 22rpx;
+  color: #A89F8C;
+}
+
+.status-badge {
+  margin-left: auto;
+  padding: 8rpx 24rpx;
+  border-radius: 100rpx;
+  background-color: rgba(201,168,76,0.2);
+  display: flex;
+  align-items: center;
+}
+
+.status-text {
+  font-size: 22rpx;
+  color: #C9A84C;
+}
+
+/* ── 空状态 ── */
+.no-lesson {
+  padding: 64rpx 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.no-lesson-text {
+  font-size: 28rpx;
+  color: #5A5550;
+}
+
+.tab-bar-placeholder {
+  height: 130rpx;
+}

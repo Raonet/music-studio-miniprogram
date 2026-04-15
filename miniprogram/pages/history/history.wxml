@@ -1,0 +1,70 @@
+<navbar title="课时记录" showBack="{{false}}"></navbar>
+
+<view class="page">
+  <!-- 筛选 Tabs -->
+  <view class="tabs">
+    <view
+      wx:for="{{tabs}}"
+      wx:key="*this"
+      class="tab-item {{activeTab === item ? 'tab-active' : ''}}"
+      bindtap="setTab"
+      data-tab="{{item}}"
+    >
+      <text class="tab-text {{activeTab === item ? 'tab-text-active' : ''}}">{{item}}</text>
+      <view wx:if="{{activeTab === item}}" class="tab-underline"></view>
+    </view>
+  </view>
+
+  <!-- 记录列表 -->
+  <view class="record-list">
+    <view wx:for="{{filteredRecords}}" wx:key="id" class="record-card">
+      <view class="gold-bar"></view>
+      <view class="record-body">
+        <view class="record-top">
+          <view class="record-left">
+            <text class="record-course">{{item.course}}</text>
+            <view class="record-date-row">
+              <image class="clock-icon" src="/assets/icons/clock-secondary.svg" mode="aspectFit" />
+              <text class="record-date">{{item.date}}</text>
+            </view>
+          </view>
+          <view class="status-chip status-{{item.statusKey}}">
+            <text class="status-text">{{item.status}}</text>
+          </view>
+        </view>
+        <view class="record-bottom">
+          <view class="teacher-chip">
+            <view class="teacher-avatar-sm">
+              <text class="teacher-avatar-text">{{item.teacher[0]}}</text>
+            </view>
+            <text class="teacher-name">{{item.teacher}}</text>
+          </view>
+          <view class="duration-chip">
+            <text class="duration-text">{{item.duration}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部汇总栏 -->
+  <view class="summary-bar">
+    <view class="summary-item">
+      <text class="summary-label">已消耗课时</text>
+      <view class="summary-value-row">
+        <text class="summary-num">36</text>
+        <text class="summary-unit">节</text>
+      </view>
+    </view>
+    <view class="summary-divider"></view>
+    <view class="summary-item">
+      <text class="summary-label">累计学习时长</text>
+      <view class="summary-value-row">
+        <text class="summary-num">54</text>
+        <text class="summary-unit">小时</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="tab-bar-placeholder"></view>
+</view>

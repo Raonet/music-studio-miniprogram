@@ -1,0 +1,119 @@
+<view class="page">
+  <!-- Header -->
+  <view class="header" style="padding-top: {{statusBarHeight + 24}}px;">
+    <view class="header-left">
+      <text class="greeting">下午好</text>
+      <text class="username">陈同学</text>
+    </view>
+    <view class="avatar">
+      <text class="avatar-text">陈</text>
+    </view>
+  </view>
+
+  <!-- 剩余课时卡片 -->
+  <view class="section">
+    <view class="hero-card">
+      <view class="hero-corner hero-corner-tl"></view>
+      <view class="hero-corner hero-corner-br"></view>
+      <view class="hero-body">
+        <view class="hero-left">
+          <text class="label">剩余课时</text>
+          <view class="count-row">
+            <text class="count-num">24</text>
+            <text class="count-unit">节</text>
+          </view>
+          <text class="expire-text">有效期至 2026-12-31</text>
+        </view>
+        <view class="progress-ring-wrap">
+          <canvas type="2d" id="progressCanvas" class="progress-canvas"></canvas>
+          <text class="progress-label">60%</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 下节课 -->
+  <view class="section">
+    <view class="next-lesson-card" bindtap="showReminder">
+      <view class="next-header">
+        <text class="label">下节课</text>
+        <view class="time-badge">
+          <text class="time-badge-text">明天 15:00</text>
+        </view>
+      </view>
+      <view class="next-body">
+        <view class="next-info">
+          <text class="next-title">钢琴进阶课</text>
+          <text class="next-teacher">授课老师：李老师</text>
+        </view>
+        <view class="detail-btn">
+          <text class="detail-btn-text">查看详情</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快捷功能 -->
+  <view class="section">
+    <view class="quick-actions">
+      <view class="quick-item" bindtap="goSchedule">
+        <view class="quick-icon-wrap">
+          <image class="quick-icon" src="/assets/icons/calendar-gold.svg" mode="aspectFit" />
+        </view>
+        <text class="quick-label">课程表</text>
+      </view>
+      <view class="quick-item" bindtap="goLeave">
+        <view class="quick-icon-wrap">
+          <image class="quick-icon" src="/assets/icons/file-text-gold.svg" mode="aspectFit" />
+        </view>
+        <text class="quick-label">请假</text>
+      </view>
+      <view class="quick-item" bindtap="goHistory">
+        <view class="quick-icon-wrap">
+          <image class="quick-icon" src="/assets/icons/clock-gold.svg" mode="aspectFit" />
+        </view>
+        <text class="quick-label">课时记录</text>
+      </view>
+      <view class="quick-item" bindtap="goMessages">
+        <view class="quick-icon-wrap">
+          <image class="quick-icon" src="/assets/icons/message-square-gold.svg" mode="aspectFit" />
+        </view>
+        <text class="quick-label">消息</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 近期课程 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">近期课程</text>
+      <text class="section-more" bindtap="goHistory">查看全部</text>
+    </view>
+    <view class="lesson-list">
+      <view wx:for="{{recentLessons}}" wx:key="id" class="lesson-card">
+        <view class="lesson-card-top">
+          <view class="lesson-card-left">
+            <view class="lesson-name-row">
+              <text class="lesson-name">{{item.type}}</text>
+              <view class="status-badge completed">
+                <text class="status-text">已上课</text>
+              </view>
+            </view>
+            <view class="lesson-meta">
+              <text class="meta-text">{{item.date}}</text>
+              <text class="meta-text">{{item.teacher}}</text>
+              <text class="meta-text">{{item.duration}}</text>
+            </view>
+          </view>
+          <view class="trend-icon-wrap">
+            <image class="trend-icon" src="/assets/icons/trending-up-green.svg" mode="aspectFit" />
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="tab-bar-placeholder"></view>
+</view>
+
+<reminder-modal isOpen="{{showReminderModal}}" lessonTime="{{nextLessonTime}}" bind:close="hideReminder"></reminder-modal>

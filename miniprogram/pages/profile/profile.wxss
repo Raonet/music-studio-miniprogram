@@ -1,0 +1,305 @@
+.page {
+  background-color: #1A1A1F;
+  min-height: 100vh;
+  padding: 32rpx 48rpx;
+}
+
+/* 用户信息卡片 */
+.user-card {
+  background-color: #22222A;
+  border-radius: 32rpx;
+  border: 1rpx solid #2E2D35;
+  padding: 48rpx;
+  margin-bottom: 32rpx;
+  box-shadow: 0 8rpx 32rpx rgba(0,0,0,0.4);
+}
+
+.user-card-inner {
+  display: flex;
+  align-items: center;
+  gap: 40rpx;
+}
+
+.avatar-wrap {
+  position: relative;
+  width: 120rpx;
+  height: 120rpx;
+  flex-shrink: 0;
+}
+
+.avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #C9A84C, #8B6914);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-text {
+  font-size: 48rpx;
+  color: #1A1A1F;
+  font-weight: 600;
+}
+
+.avatar-gold-ring {
+  position: absolute;
+  inset: -6rpx;
+  border-radius: 50%;
+  border: 3rpx solid rgba(201,168,76,0.4);
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+  flex: 1;
+}
+
+.user-name {
+  font-size: 40rpx;
+  color: #F0EDE6;
+  font-weight: 600;
+}
+
+.user-id {
+  font-size: 24rpx;
+  color: #A89F8C;
+}
+
+.user-tag {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 6rpx 20rpx;
+  border-radius: 100rpx;
+  background-color: rgba(201,168,76,0.15);
+  border: 1rpx solid rgba(201,168,76,0.3);
+  margin-top: 4rpx;
+}
+
+.user-tag-text {
+  font-size: 22rpx;
+  color: #C9A84C;
+}
+
+/* 统计卡片 */
+.stats-card {
+  background-color: #22222A;
+  border-radius: 32rpx;
+  border: 1rpx solid #2E2D35;
+  padding: 40rpx 0;
+  margin-bottom: 48rpx;
+  display: flex;
+  align-items: center;
+}
+
+.stats-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10rpx;
+}
+
+.stats-num {
+  font-size: 48rpx;
+  color: #F0EDE6;
+  font-family: monospace;
+  font-weight: 700;
+}
+
+.stats-num.gold {
+  color: #C9A84C;
+}
+
+.stats-label {
+  font-size: 24rpx;
+  color: #A89F8C;
+}
+
+.stats-divider {
+  width: 2rpx;
+  height: 72rpx;
+  background-color: #2E2D35;
+}
+
+/* 分组标题 */
+.section-group {
+  margin-bottom: 40rpx;
+}
+
+.group-title {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 24rpx;
+}
+
+.group-title-bar {
+  width: 6rpx;
+  height: 32rpx;
+  border-radius: 6rpx;
+  background: linear-gradient(180deg, #E2C07A, #C9A84C);
+}
+
+.group-title-text {
+  font-size: 28rpx;
+  color: #A89F8C;
+}
+
+/* 课包卡片 */
+.package-card {
+  background-color: #22222A;
+  border-radius: 32rpx;
+  border: 1rpx solid #2E2D35;
+  overflow: hidden;
+  display: flex;
+}
+
+.gold-bar {
+  width: 8rpx;
+  background: linear-gradient(180deg, #E2C07A, #C9A84C);
+  flex-shrink: 0;
+}
+
+.package-body {
+  flex: 1;
+  padding: 40rpx 40rpx 40rpx 32rpx;
+}
+
+.package-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16rpx;
+}
+
+.package-name {
+  font-size: 32rpx;
+  color: #F0EDE6;
+  font-weight: 500;
+}
+
+.package-badge {
+  padding: 6rpx 20rpx;
+  border-radius: 100rpx;
+  background-color: rgba(76,175,125,0.2);
+}
+
+.package-badge-text {
+  font-size: 22rpx;
+  color: #4CAF7D;
+}
+
+.package-meta {
+  margin-bottom: 28rpx;
+}
+
+.package-meta-text {
+  font-size: 24rpx;
+  color: #A89F8C;
+}
+
+.package-progress-bar {
+  height: 8rpx;
+  background-color: #2E2D35;
+  border-radius: 8rpx;
+  margin-bottom: 16rpx;
+  overflow: hidden;
+}
+
+.package-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #C9A84C, #E2C07A);
+  border-radius: 8rpx;
+}
+
+.package-progress-label {
+  display: flex;
+  justify-content: space-between;
+}
+
+.progress-label-text {
+  font-size: 22rpx;
+  color: #A89F8C;
+}
+
+/* 功能菜单 */
+.menu-card {
+  background-color: #22222A;
+  border-radius: 32rpx;
+  border: 1rpx solid #2E2D35;
+  overflow: hidden;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 36rpx 40rpx;
+}
+
+.menu-item-border {
+  border-bottom: 1rpx solid #2E2D35;
+}
+
+.menu-item-left {
+  display: flex;
+  align-items: center;
+  gap: 28rpx;
+}
+
+.menu-icon-wrap {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 20rpx;
+  background-color: rgba(201,168,76,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-icon {
+  width: 40rpx;
+  height: 40rpx;
+}
+
+.menu-label {
+  font-size: 30rpx;
+  color: #F0EDE6;
+}
+
+.menu-arrow {
+  width: 32rpx;
+  height: 32rpx;
+  flex-shrink: 0;
+}
+
+/* 退出登录 */
+.logout-btn {
+  margin-top: 16rpx;
+  height: 96rpx;
+  border-radius: 24rpx;
+  border: 1rpx solid #2E2D35;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #22222A;
+}
+
+.logout-text {
+  font-size: 30rpx;
+  color: #A89F8C;
+}
+
+.version-text {
+  text-align: center;
+  margin-top: 40rpx;
+  font-size: 22rpx;
+  color: #2E2D35;
+}
+
+.tab-bar-placeholder {
+  height: 130rpx;
+}

@@ -1,0 +1,137 @@
+.modal-mask {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 32rpx;
+}
+
+.modal-content {
+  background-color: #22222A;
+  border-radius: 32rpx;
+  padding: 64rpx 48rpx 48rpx;
+  width: 100%;
+  max-width: 680rpx;
+  border: 1rpx solid #2E2D35;
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 28rpx;
+  right: 28rpx;
+  width: 56rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-icon {
+  width: 40rpx;
+  height: 40rpx;
+}
+
+.music-icon-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 48rpx;
+  position: relative;
+}
+
+.music-glow {
+  position: absolute;
+  width: 120rpx;
+  height: 120rpx;
+  background-color: #C9A84C;
+  border-radius: 50%;
+  opacity: 0.2;
+  filter: blur(20rpx);
+}
+
+.music-icon-circle {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #E2C07A, #C9A84C);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.music-icon {
+  width: 56rpx;
+  height: 56rpx;
+}
+
+.lesson-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 48rpx;
+  gap: 8rpx;
+}
+
+.lesson-title {
+  font-size: 48rpx;
+  color: #F0EDE6;
+  font-weight: 600;
+}
+
+.lesson-date, .lesson-teacher {
+  font-size: 28rpx;
+  color: #A89F8C;
+}
+
+.countdown-box {
+  background-color: #1A1A1F;
+  border-radius: 24rpx;
+  padding: 32rpx;
+  margin-bottom: 48rpx;
+  border: 1rpx solid #2E2D35;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.countdown-label {
+  font-size: 24rpx;
+  color: #A89F8C;
+}
+
+.countdown-time {
+  font-size: 64rpx;
+  color: #C9A84C;
+  font-family: monospace;
+  letter-spacing: 4rpx;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 24rpx;
+}
+
+.btn-outline, .btn-gold {
+  flex: 1;
+  height: 88rpx;
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+}
+
+.btn-outline {
+  border: 1rpx solid #C9A84C;
+  color: #C9A84C;
+}
+
+.btn-gold {
+  background: linear-gradient(90deg, #C9A84C, #E2C07A);
+  color: #1A1A1F;
+  font-weight: 600;
+}
