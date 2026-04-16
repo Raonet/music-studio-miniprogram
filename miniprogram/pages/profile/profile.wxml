@@ -1,99 +1,143 @@
 <navbar title="我的" showBack="{{false}}"></navbar>
 
 <view class="page">
-  <!-- 用户信息卡片 -->
-  <view class="user-card">
-    <view class="user-card-inner">
-      <view class="avatar-wrap">
-        <view class="avatar">
-          <text class="avatar-text">陈</text>
-        </view>
-        <view class="avatar-gold-ring"></view>
+  <!-- 未登录态 -->
+  <block wx:if="{{!isLoggedIn}}">
+    <view class="login-card">
+      <view class="login-icon-wrap">
+        <image class="login-icon" src="/assets/icons/music-note-gold.svg" mode="aspectFit" />
       </view>
-      <view class="user-info">
-        <text class="user-name">陈同学</text>
-        <text class="user-id">学员ID：MU-20240315</text>
-        <view class="user-tag">
-          <text class="user-tag-text">钢琴·乐理</text>
+      <text class="login-title">欢迎使用 Music Studio</text>
+      <text class="login-desc">登录后查看个人信息、课时记录和课程安排</text>
+      <button
+        class="login-btn"
+        open-type="getPhoneNumber"
+        bindgetphonenumber="onLogin"
+      >
+        <text class="login-btn-text">微信一键登录</text>
+      </button>
+    </view>
+
+    <!-- 功能菜单（未登录也可访问） -->
+    <view class="section-group" style="margin-top: 48rpx;">
+      <view class="group-title">
+        <view class="group-title-bar"></view>
+        <text class="group-title-text">我的服务</text>
+      </view>
+      <view class="menu-card">
+        <view wx:for="{{menuItems}}" wx:key="label" class="menu-item {{index < menuItems.length - 1 ? 'menu-item-border' : ''}}" bindtap="onMenuTap" data-action="{{item.action}}">
+          <view class="menu-item-left">
+            <view class="menu-icon-wrap">
+              <image class="menu-icon" src="{{item.icon}}" mode="aspectFit" />
+            </view>
+            <text class="menu-label">{{item.label}}</text>
+          </view>
+          <image class="menu-arrow" src="/assets/icons/chevron-right-secondary.svg" mode="aspectFit" />
         </view>
       </view>
     </view>
-  </view>
 
-  <!-- 课时统计 -->
-  <view class="stats-card">
-    <view class="stats-item">
-      <text class="stats-num">60</text>
-      <text class="stats-label">购买课时</text>
+    <view class="version-text">
+      <text>Music Studio v1.0.0</text>
     </view>
-    <view class="stats-divider"></view>
-    <view class="stats-item">
-      <text class="stats-num">36</text>
-      <text class="stats-label">已上课时</text>
-    </view>
-    <view class="stats-divider"></view>
-    <view class="stats-item">
-      <text class="stats-num gold">24</text>
-      <text class="stats-label">剩余课时</text>
-    </view>
-  </view>
+  </block>
 
-  <!-- 我的课包 -->
-  <view class="section-group">
-    <view class="group-title">
-      <view class="group-title-bar"></view>
-      <text class="group-title-text">我的课包</text>
-    </view>
-    <view class="package-card">
-      <view class="gold-bar"></view>
-      <view class="package-body">
-        <view class="package-top">
-          <text class="package-name">钢琴成长套餐</text>
-          <view class="package-badge">
-            <text class="package-badge-text">进行中</text>
+  <!-- 已登录态 -->
+  <block wx:else>
+    <!-- 用户信息卡片 -->
+    <view class="user-card">
+      <view class="user-card-inner">
+        <view class="avatar-wrap">
+          <view class="avatar">
+            <text class="avatar-text">{{avatarText}}</text>
+          </view>
+          <view class="avatar-gold-ring"></view>
+        </view>
+        <view class="user-info">
+          <text class="user-name">{{specialty || '同学'}}</text>
+          <text class="user-id">学员ID：{{studentNo}}</text>
+          <view class="user-tag" wx:if="{{specialty}}">
+            <text class="user-tag-text">{{specialty}}</text>
           </view>
         </view>
-        <view class="package-meta">
-          <text class="package-meta-text">60节 · 有效期至 2026-12-31</text>
-        </view>
-        <view class="package-progress-bar">
-          <view class="package-progress-fill" style="width: 40%;"></view>
-        </view>
-        <view class="package-progress-label">
-          <text class="progress-label-text">已使用 36 节</text>
-          <text class="progress-label-text">剩余 24 节</text>
-        </view>
       </view>
     </view>
-  </view>
 
-  <!-- 功能菜单 -->
-  <view class="section-group">
-    <view class="group-title">
-      <view class="group-title-bar"></view>
-      <text class="group-title-text">我的服务</text>
+    <!-- 课时统计 -->
+    <view class="stats-card">
+      <view class="stats-item">
+        <text class="stats-num">{{totalLessons}}</text>
+        <text class="stats-label">购买课时</text>
+      </view>
+      <view class="stats-divider"></view>
+      <view class="stats-item">
+        <text class="stats-num">{{usedLessons}}</text>
+        <text class="stats-label">已上课时</text>
+      </view>
+      <view class="stats-divider"></view>
+      <view class="stats-item">
+        <text class="stats-num gold">{{remainingLessons}}</text>
+        <text class="stats-label">剩余课时</text>
+      </view>
     </view>
-    <view class="menu-card">
-      <view wx:for="{{menuItems}}" wx:key="label" class="menu-item {{index < menuItems.length - 1 ? 'menu-item-border' : ''}}" bindtap="onMenuTap" data-action="{{item.action}}">
-        <view class="menu-item-left">
-          <view class="menu-icon-wrap">
-            <image class="menu-icon" src="{{item.icon}}" mode="aspectFit" />
+
+    <!-- 我的课包 -->
+    <view class="section-group" wx:if="{{package}}">
+      <view class="group-title">
+        <view class="group-title-bar"></view>
+        <text class="group-title-text">我的课包</text>
+      </view>
+      <view class="package-card">
+        <view class="gold-bar"></view>
+        <view class="package-body">
+          <view class="package-top">
+            <text class="package-name">{{package.name}}</text>
+            <view class="package-badge">
+              <text class="package-badge-text">进行中</text>
+            </view>
           </view>
-          <text class="menu-label">{{item.label}}</text>
+          <view class="package-meta">
+            <text class="package-meta-text">{{package.totalLessons}}节 · 有效期至 {{package.expireDate}}</text>
+          </view>
+          <view class="package-progress-bar">
+            <view class="package-progress-fill" style="width: {{packageProgress}}%;"></view>
+          </view>
+          <view class="package-progress-label">
+            <text class="progress-label-text">已使用 {{package.usedLessons}} 节</text>
+            <text class="progress-label-text">剩余 {{remainingLessons}} 节</text>
+          </view>
         </view>
-        <image class="menu-arrow" src="/assets/icons/chevron-right-secondary.svg" mode="aspectFit" />
       </view>
     </view>
-  </view>
 
-  <!-- 退出登录 -->
-  <view class="logout-btn" bindtap="handleLogout">
-    <text class="logout-text">退出登录</text>
-  </view>
+    <!-- 功能菜单 -->
+    <view class="section-group">
+      <view class="group-title">
+        <view class="group-title-bar"></view>
+        <text class="group-title-text">我的服务</text>
+      </view>
+      <view class="menu-card">
+        <view wx:for="{{menuItems}}" wx:key="label" class="menu-item {{index < menuItems.length - 1 ? 'menu-item-border' : ''}}" bindtap="onMenuTap" data-action="{{item.action}}">
+          <view class="menu-item-left">
+            <view class="menu-icon-wrap">
+              <image class="menu-icon" src="{{item.icon}}" mode="aspectFit" />
+            </view>
+            <text class="menu-label">{{item.label}}</text>
+          </view>
+          <image class="menu-arrow" src="/assets/icons/chevron-right-secondary.svg" mode="aspectFit" />
+        </view>
+      </view>
+    </view>
 
-  <view class="version-text">
-    <text>Music Studio v1.0.0</text>
-  </view>
+    <!-- 退出登录 -->
+    <view class="logout-btn" bindtap="handleLogout">
+      <text class="logout-text">退出登录</text>
+    </view>
+
+    <view class="version-text">
+      <text>Music Studio v1.0.0</text>
+    </view>
+  </block>
 
   <view class="tab-bar-placeholder"></view>
 </view>

@@ -15,8 +15,14 @@
     </view>
   </view>
 
+  <!-- 未登录 / 空状态 -->
+  <view class="empty-state" wx:if="{{!isLoggedIn || filteredRecords.length === 0}}">
+    <image class="empty-icon" src="/assets/icons/clock-gold.svg" mode="aspectFit" />
+    <text class="empty-text">{{isLoggedIn ? '暂无记录' : '登录后查看课时记录'}}</text>
+  </view>
+
   <!-- 记录列表 -->
-  <view class="record-list">
+  <view class="record-list" wx:else>
     <view wx:for="{{filteredRecords}}" wx:key="id" class="record-card">
       <view class="gold-bar"></view>
       <view class="record-body">
@@ -52,7 +58,7 @@
     <view class="summary-item">
       <text class="summary-label">已消耗课时</text>
       <view class="summary-value-row">
-        <text class="summary-num">36</text>
+        <text class="summary-num">{{usedLessons}}</text>
         <text class="summary-unit">节</text>
       </view>
     </view>
@@ -60,7 +66,7 @@
     <view class="summary-item">
       <text class="summary-label">累计学习时长</text>
       <view class="summary-value-row">
-        <text class="summary-num">54</text>
+        <text class="summary-num">{{totalHours}}</text>
         <text class="summary-unit">小时</text>
       </view>
     </view>

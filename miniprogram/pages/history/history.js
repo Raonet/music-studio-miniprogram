@@ -1,28 +1,62 @@
-const allRecords = [
-  { id: 1, date: '2026-04-14 14:00', course: '钢琴基础课', teacher: '王老师', duration: '60分钟', status: '已上课', statusKey: 'completed' },
-  { id: 2, date: '2026-04-12 15:00', course: '乐理课', teacher: '李老师', duration: '45分钟', status: '已上课', statusKey: 'completed' },
-  { id: 3, date: '2026-04-10 10:00', course: '钢琴进阶课', teacher: '张老师', duration: '60分钟', status: '已上课', statusKey: 'completed' },
-  { id: 4, date: '2026-04-08 16:00', course: '钢琴基础课', teacher: '王老师', duration: '60分钟', status: '已请假', statusKey: 'leave' },
-  { id: 5, date: '2026-04-06 14:00', course: '乐理课', teacher: '李老师', duration: '45分钟', status: '已上课', statusKey: 'completed' },
-  { id: 6, date: '2026-04-04 15:00', course: '钢琴进阶课', teacher: '张老师', duration: '60分钟', status: '待补课', statusKey: 'makeup' }
-]
+const { get } = require('../../utils/request');
+
+const TAB_STATUS_MAP = {
+  '已上课': 'completed',
+  '已请假': 'leave',
+  '待补课': 'makeup',
+};
 
 Page({
   data: {
+    isLoggedIn: false,
     tabs: ['全部', '已上课', '已请假', '待补课'],
     activeTab: '全部',
-    filteredRecords: allRecords
+    filteredRecords: [],
+    allRecords: [],
+    usedLessons: 0,
+    totalHours: 0,
   },
 
   onShow() {
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().setData({ selected: 2 })
+      this.getTabBar().setData({ selected: 2 });
+    }
+    const app = getApp();
+    const isLoggedIn = app.globalData.isLoggedIn;
+    this.setData({ isLoggedIn });
+    if (isLoggedIn) {
+      this._loadRecords();
+    } else {
+      this.setData({ filteredRecords: [], allRecords: [], usedLessons: 0, totalHours: 0 });
+    }
+  },
+
+  async _loadRecords(statusFilter) {
+    try {
+      const statusKey = statusFilter ? TAB_STATUS_MAP[statusFilter] : undefined;
+      const url = statusKey
+        ? `/app/music/lesson/records?status=${statusKey}`
+        : '/app/music/lesson/records';
+      const data = await get(url);
+      this.setData({
+        allRecords: data.records || [],
+        filteredRecords: data.records || [],
+        usedLessons: data.summary?.usedLessons || 0,
+        totalHours: data.summary?.totalHours || 0,
+      });
+    } catch (e) {
+      console.error('加载课时记录失败', e);
     }
   },
 
   setTab(e) {
-    const tab = e.currentTarget.dataset.tab
-    const filtered = tab === '全部' ? allRecords : allRecords.filter(r => r.status === tab)
-    this.setData({ activeTab: tab, filteredRecords: filtered })
-  }
-})
+    const tab = e.currentTarget.dataset.tab;
+    this.setData({ activeTab: tab });
+    if (!this.data.isLoggedIn) return;
+    if (tab === '全部') {
+      this._loadRecords();
+    } else {
+      this._loadRecords(tab);
+    }
+  },
+});

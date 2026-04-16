@@ -1,20 +1,51 @@
-const allRecords = [
-  { id: 1, course: '钢琴基础课', leaveDate: '2026-04-08', reason: '身体不适，发烧', submittedAt: '2026-04-07', status: '已批准', statusKey: 'approved' },
-  { id: 2, course: '乐理课', leaveDate: '2026-04-15', reason: '家庭事务，需要处理', submittedAt: '2026-04-13', status: '审批中', statusKey: 'pending' },
-  { id: 3, course: '钢琴进阶课', leaveDate: '2026-03-22', reason: '出差在外，无法到场', submittedAt: '2026-03-20', status: '已批准', statusKey: 'approved' },
-  { id: 4, course: '钢琴基础课', leaveDate: '2026-03-10', reason: '考试周，学业紧张', submittedAt: '2026-03-09', status: '已拒绝', statusKey: 'rejected' }
-]
+const { get } = require('../../utils/request');
+
+const TAB_STATUS_MAP = {
+  '审批中': 'pending',
+  '已批准': 'approved',
+  '已拒绝': 'rejected',
+};
 
 Page({
   data: {
+    isLoggedIn: false,
     tabs: ['全部', '审批中', '已批准', '已拒绝'],
     activeTab: '全部',
-    filteredRecords: allRecords
+    filteredRecords: [],
+  },
+
+  onShow() {
+    const app = getApp();
+    const isLoggedIn = app.globalData.isLoggedIn;
+    this.setData({ isLoggedIn });
+    if (isLoggedIn) {
+      this._loadRecords();
+    } else {
+      this.setData({ filteredRecords: [] });
+    }
+  },
+
+  async _loadRecords(statusFilter) {
+    try {
+      const statusKey = statusFilter ? TAB_STATUS_MAP[statusFilter] : undefined;
+      const url = statusKey
+        ? `/app/music/leave/records?status=${statusKey}`
+        : '/app/music/leave/records';
+      const records = await get(url);
+      this.setData({ filteredRecords: records || [] });
+    } catch (e) {
+      console.error('加载请假记录失败', e);
+    }
   },
 
   setTab(e) {
-    const tab = e.currentTarget.dataset.tab
-    const filtered = tab === '全部' ? allRecords : allRecords.filter(r => r.status === tab)
-    this.setData({ activeTab: tab, filteredRecords: filtered })
-  }
-})
+    const tab = e.currentTarget.dataset.tab;
+    this.setData({ activeTab: tab });
+    if (!this.data.isLoggedIn) return;
+    if (tab === '全部') {
+      this._loadRecords();
+    } else {
+      this._loadRecords(tab);
+    }
+  },
+});

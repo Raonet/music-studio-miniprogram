@@ -22,7 +22,7 @@
       <view class="record-body">
         <view class="record-top">
           <view class="record-left">
-            <text class="record-course">{{item.course}}</text>
+            <text class="record-course">{{item.courseName}}</text>
             <view class="record-date-row">
               <image class="calendar-icon" src="/assets/icons/calendar-gold.svg" mode="aspectFit" />
               <text class="record-date">请假日期：{{item.leaveDate}}</text>
@@ -32,19 +32,19 @@
             <text class="status-text">{{item.status}}</text>
           </view>
         </view>
-        <view class="record-reason">
+        <view class="record-reason" wx:if="{{item.reason}}">
           <text class="reason-text">{{item.reason}}</text>
         </view>
-        <view class="record-bottom">
-          <text class="submitted-text">提交于 {{item.submittedAt}}</text>
+        <view class="record-bottom" wx:if="{{item.remark}}">
+          <text class="submitted-text">备注：{{item.remark}}</text>
         </view>
       </view>
     </view>
 
     <!-- 空状态 -->
-    <view wx:if="{{filteredRecords.length === 0}}" class="empty-state">
+    <view wx:if="{{!isLoggedIn || filteredRecords.length === 0}}" class="empty-state">
       <image class="empty-icon" src="/assets/icons/file-text-gold.svg" mode="aspectFit" />
-      <text class="empty-text">暂无请假记录</text>
+      <text class="empty-text">{{isLoggedIn ? '暂无请假记录' : '登录后查看请假记录'}}</text>
     </view>
   </view>
 

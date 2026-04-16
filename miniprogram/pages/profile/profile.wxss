@@ -303,3 +303,69 @@
 .tab-bar-placeholder {
   height: 130rpx;
 }
+
+/* 未登录态 */
+.login-card {
+  background-color: #22222A;
+  border-radius: 32rpx;
+  border: 1rpx solid #2E2D35;
+  padding: 80rpx 48rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24rpx;
+  margin-bottom: 0;
+}
+
+.login-icon-wrap {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background: rgba(201,168,76,0.1);
+  border: 2rpx solid rgba(201,168,76,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8rpx;
+}
+
+.login-icon {
+  width: 64rpx;
+  height: 64rpx;
+}
+
+.login-title {
+  font-size: 36rpx;
+  color: #F0EDE6;
+  font-weight: 600;
+}
+
+.login-desc {
+  font-size: 26rpx;
+  color: #A89F8C;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.login-btn {
+  margin-top: 16rpx;
+  width: 100%;
+  height: 96rpx;
+  border-radius: 24rpx;
+  background: linear-gradient(135deg, #C9A84C, #8B6914);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  padding: 0;
+}
+
+.login-btn::after {
+  border: none;
+}
+
+.login-btn-text {
+  font-size: 32rpx;
+  color: #1A1A1F;
+  font-weight: 600;
+}

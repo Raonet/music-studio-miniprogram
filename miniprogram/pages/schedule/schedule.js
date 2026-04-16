@@ -1,180 +1,177 @@
-const ALL_LESSONS = {
-  '2026-04-14': [
-    { id: 1, time: '10:00-11:00', course: '钢琴基础课', teacher: '王老师', teacherAvatar: '王', room: 'A101 教室', status: '待上课' }
-  ],
-  '2026-04-16': [
-    { id: 2, time: '15:00-16:00', course: '钢琴进阶课', teacher: '李老师', teacherAvatar: '李', room: 'B205 教室', status: '待上课' }
-  ],
-  '2026-04-17': [
-    { id: 3, time: '18:30-19:15', course: '乐理课', teacher: '张老师', teacherAvatar: '张', room: 'C302 教室', status: '待上课' }
-  ],
-  '2026-04-19': [
-    { id: 4, time: '10:00-11:00', course: '钢琴基础课', teacher: '王老师', teacherAvatar: '王', room: 'A101 教室', status: '待上课' }
-  ],
-  '2026-04-22': [
-    { id: 5, time: '15:00-16:00', course: '钢琴进阶课', teacher: '李老师', teacherAvatar: '李', room: 'B205 教室', status: '待上课' }
-  ],
-  '2026-04-26': [
-    { id: 6, time: '10:00-11:00', course: '钢琴基础课', teacher: '王老师', teacherAvatar: '王', room: 'A101 教室', status: '待上课' },
-    { id: 7, time: '14:00-14:45', course: '乐理课', teacher: '张老师', teacherAvatar: '张', room: 'C302 教室', status: '待上课' }
-  ]
-}
+const { get } = require('../../utils/request');
 
-function pad(n) { return String(n).padStart(2, '0') }
+function pad(n) { return String(n).padStart(2, '0'); }
 
-function buildCalendar(year, month) {
-  const firstWeekday = new Date(year, month - 1, 1).getDay()
-  const offset = (firstWeekday + 6) % 7  // 周一=0 ... 周日=6
-
-  const daysInMonth = new Date(year, month, 0).getDate()
-
-  const prevYear = month === 1 ? year - 1 : year
-  const prevMonth = month === 1 ? 12 : month - 1
-  const daysInPrev = new Date(prevYear, prevMonth, 0).getDate()
-
-  const now = new Date()
-  const todayStr = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`
-
-  const days = []
+function buildCalendar(year, month, lessonDates) {
+  const firstWeekday = new Date(year, month - 1, 1).getDay();
+  const offset = (firstWeekday + 6) % 7; // 周一=0 ... 周日=6
+  const daysInMonth = new Date(year, month, 0).getDate();
+  const prevYear = month === 1 ? year - 1 : year;
+  const prevMonth = month === 1 ? 12 : month - 1;
+  const daysInPrev = new Date(prevYear, prevMonth, 0).getDate();
+  const now = new Date();
+  const todayStr = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+  const lessonSet = new Set(lessonDates || []);
+  const days = [];
 
   for (let i = offset - 1; i >= 0; i--) {
-    days.push({ date: daysInPrev - i, type: 'other', dateStr: '', hasLesson: false, isToday: false })
+    days.push({ date: daysInPrev - i, type: 'other', dateStr: '', hasLesson: false, isToday: false });
   }
 
   for (let d = 1; d <= daysInMonth; d++) {
-    const dateStr = `${year}-${pad(month)}-${pad(d)}`
-    days.push({ date: d, type: 'current', dateStr, hasLesson: !!ALL_LESSONS[dateStr], isToday: dateStr === todayStr })
+    const dateStr = `${year}-${pad(month)}-${pad(d)}`;
+    days.push({ date: d, type: 'current', dateStr, hasLesson: lessonSet.has(dateStr), isToday: dateStr === todayStr });
   }
 
-  const rem = days.length % 7
+  const rem = days.length % 7;
   if (rem !== 0) {
     for (let d = 1; d <= 7 - rem; d++) {
-      days.push({ date: d, type: 'other', dateStr: '', hasLesson: false, isToday: false })
+      days.push({ date: d, type: 'other', dateStr: '', hasLesson: false, isToday: false });
     }
   }
 
-  return days
+  return days;
 }
 
-// 根据 selectedDate 给每个 day 加上预计算的 class 字符串
 function applyClasses(days, selectedDate) {
   return days.map(function(item) {
-    var isSelected = item.dateStr && item.dateStr === selectedDate
-    var isOther = item.type === 'other'
-    var isToday = item.isToday && !isSelected
+    const isSelected = item.dateStr && item.dateStr === selectedDate;
+    const isOther = item.type === 'other';
+    const isToday = item.isToday && !isSelected;
 
-    var wrapClass = 'cal-date-wrap'
-    if (isSelected) wrapClass += ' cal-date-selected-bg'
-    else if (isToday) wrapClass += ' cal-date-today-bg'
+    let wrapClass = 'cal-date-wrap';
+    if (isSelected) wrapClass += ' cal-date-selected-bg';
+    else if (isToday) wrapClass += ' cal-date-today-bg';
 
-    var textClass = 'cal-date-text'
-    if (isOther) textClass += ' cal-date-dim'
-    else if (isSelected) textClass += ' cal-date-active'
-    else if (isToday) textClass += ' cal-date-today'
+    let textClass = 'cal-date-text';
+    if (isOther) textClass += ' cal-date-dim';
+    else if (isSelected) textClass += ' cal-date-active';
+    else if (isToday) textClass += ' cal-date-today';
 
-    var dotClass = 'cal-dot'
-    if (isSelected) dotClass += ' cal-dot-dim'
+    let dotClass = 'cal-dot';
+    if (isSelected) dotClass += ' cal-dot-dim';
 
-    return Object.assign({}, item, { wrapClass: wrapClass, textClass: textClass, dotClass: dotClass })
-  })
+    return Object.assign({}, item, { wrapClass, textClass, dotClass });
+  });
 }
 
 function formatDateLabel(dateStr) {
-  if (!dateStr) return ''
-  var parts = dateStr.split('-')
-  var y = parseInt(parts[0])
-  var m = parseInt(parts[1])
-  var d = parseInt(parts[2])
-  var weekNames = ['日', '一', '二', '三', '四', '五', '六']
-  var weekday = new Date(y, m - 1, d).getDay()
-  return m + '月' + d + '日  周' + weekNames[weekday]
+  if (!dateStr) return '';
+  const parts = dateStr.split('-');
+  const y = parseInt(parts[0]);
+  const m = parseInt(parts[1]);
+  const d = parseInt(parts[2]);
+  const weekNames = ['日', '一', '二', '三', '四', '五', '六'];
+  const weekday = new Date(y, m - 1, d).getDay();
+  return m + '月' + d + '日  周' + weekNames[weekday];
 }
 
 Page({
   data: {
+    isLoggedIn: false,
     year: 0,
     month: 0,
     selectedDate: '',
     selectedDateLabel: '',
     weekLabels: ['一', '二', '三', '四', '五', '六', '日'],
     calDays: [],
-    lessons: []
+    lessons: [],
+    lessonsByDate: {},
+    lessonDates: [],
   },
 
-  onLoad: function() {
-    var now = new Date()
-    var year = now.getFullYear()
-    var month = now.getMonth() + 1
-    var selectedDate = year + '-' + pad(month) + '-' + pad(now.getDate())
-    var rawDays = buildCalendar(year, month)
-    var calDays = applyClasses(rawDays, selectedDate)
-    var lessons = ALL_LESSONS[selectedDate] || []
+  _monthCache: {},
+
+  onLoad() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1;
+    const selectedDate = `${year}-${pad(month)}-${pad(now.getDate())}`;
+    const rawDays = buildCalendar(year, month, []);
+    const calDays = applyClasses(rawDays, selectedDate);
     this.setData({
-      year: year,
-      month: month,
-      selectedDate: selectedDate,
+      year, month, selectedDate,
       selectedDateLabel: formatDateLabel(selectedDate),
-      calDays: calDays,
-      lessons: lessons
-    })
+      calDays,
+    });
   },
 
-  onShow: function() {
+  onShow() {
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().setData({ selected: 1 })
+      this.getTabBar().setData({ selected: 1 });
+    }
+    const app = getApp();
+    const isLoggedIn = app.globalData.isLoggedIn;
+    this.setData({ isLoggedIn });
+    if (isLoggedIn) {
+      this._loadMonth(this.data.year, this.data.month);
+    } else {
+      this.setData({ calDays: applyClasses(buildCalendar(this.data.year, this.data.month, []), ''), lessons: [] });
     }
   },
 
-  selectCalDay: function(e) {
-    var date = e.currentTarget.dataset.date
-    var type = e.currentTarget.dataset.type
-    if (type !== 'current' || !date) return
-    var rawDays = buildCalendar(this.data.year, this.data.month)
-    var calDays = applyClasses(rawDays, date)
-    var lessons = ALL_LESSONS[date] || []
+  async _loadMonth(year, month) {
+    try {
+      const data = await get(`/app/music/schedule/month?year=${year}&month=${month}`);
+      const lessonDates = data.lessonDates || [];
+      const lessonsByDate = data.lessonsByDate || {};
+      const rawDays = buildCalendar(year, month, lessonDates);
+      const calDays = applyClasses(rawDays, this.data.selectedDate);
+      const lessons = lessonsByDate[this.data.selectedDate] || [];
+      this.setData({ calDays, lessonsByDate, lessonDates, lessons });
+    } catch (e) {
+      console.error('加载月历失败', e);
+    }
+  },
+
+  selectCalDay(e) {
+    const date = e.currentTarget.dataset.date;
+    const type = e.currentTarget.dataset.type;
+    if (type !== 'current' || !date) return;
+    const rawDays = buildCalendar(this.data.year, this.data.month, this.data.lessonDates);
+    const calDays = applyClasses(rawDays, date);
+    const lessons = this.data.lessonsByDate[date] || [];
     this.setData({
       selectedDate: date,
       selectedDateLabel: formatDateLabel(date),
-      calDays: calDays,
-      lessons: lessons
-    })
+      calDays,
+      lessons,
+    });
   },
 
-  prevMonth: function() {
-    var year = this.data.year
-    var month = this.data.month - 1
-    if (month < 1) { month = 12; year-- }
-    var newPrefix = year + '-' + pad(month) + '-'
-    var selectedDate = this.data.selectedDate.indexOf(newPrefix) === 0 ? this.data.selectedDate : ''
-    var rawDays = buildCalendar(year, month)
-    var calDays = applyClasses(rawDays, selectedDate)
-    var lessons = selectedDate ? (ALL_LESSONS[selectedDate] || []) : []
+  prevMonth() {
+    let { year, month } = this.data;
+    month--;
+    if (month < 1) { month = 12; year--; }
+    const newPrefix = `${year}-${pad(month)}-`;
+    const selectedDate = this.data.selectedDate.startsWith(newPrefix) ? this.data.selectedDate : '';
+    const rawDays = buildCalendar(year, month, []);
+    const calDays = applyClasses(rawDays, selectedDate);
     this.setData({
-      year: year,
-      month: month,
-      selectedDate: selectedDate,
+      year, month, selectedDate,
       selectedDateLabel: formatDateLabel(selectedDate),
-      calDays: calDays,
-      lessons: lessons
-    })
+      calDays, lessons: [], lessonDates: [], lessonsByDate: {},
+    });
+    if (this.data.isLoggedIn) {
+      this._loadMonth(year, month);
+    }
   },
 
-  nextMonth: function() {
-    var year = this.data.year
-    var month = this.data.month + 1
-    if (month > 12) { month = 1; year++ }
-    var newPrefix = year + '-' + pad(month) + '-'
-    var selectedDate = this.data.selectedDate.indexOf(newPrefix) === 0 ? this.data.selectedDate : ''
-    var rawDays = buildCalendar(year, month)
-    var calDays = applyClasses(rawDays, selectedDate)
-    var lessons = selectedDate ? (ALL_LESSONS[selectedDate] || []) : []
+  nextMonth() {
+    let { year, month } = this.data;
+    month++;
+    if (month > 12) { month = 1; year++; }
+    const newPrefix = `${year}-${pad(month)}-`;
+    const selectedDate = this.data.selectedDate.startsWith(newPrefix) ? this.data.selectedDate : '';
+    const rawDays = buildCalendar(year, month, []);
+    const calDays = applyClasses(rawDays, selectedDate);
     this.setData({
-      year: year,
-      month: month,
-      selectedDate: selectedDate,
+      year, month, selectedDate,
       selectedDateLabel: formatDateLabel(selectedDate),
-      calDays: calDays,
-      lessons: lessons
-    })
-  }
-})
+      calDays, lessons: [], lessonDates: [], lessonsByDate: {},
+    });
+    if (this.data.isLoggedIn) {
+      this._loadMonth(year, month);
+    }
+  },
+});
