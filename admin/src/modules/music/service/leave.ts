@@ -1,6 +1,6 @@
 import { BaseService } from '/@/cool';
 
-export class MusicLeaveService extends BaseService {
+class MusicLeaveService extends BaseService {
 	constructor() {
 		super('admin/music/leave');
 	}
@@ -13,3 +13,5 @@ export class MusicLeaveService extends BaseService {
 		return this.request({ url: '/reject', method: 'POST', data });
 	}
 }
+
+export default MusicLeaveService;

@@ -1,7 +1,9 @@
 import { BaseService } from '/@/cool';
 
-export class MusicCourseService extends BaseService {
+class MusicCourseService extends BaseService {
 	constructor() {
 		super('admin/music/course');
 	}
 }
+
+export default MusicCourseService;
