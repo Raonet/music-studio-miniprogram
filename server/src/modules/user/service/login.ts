@@ -14,6 +14,10 @@ import { PluginService } from '../../plugin/service/info';
 import axios from 'axios';
 import { CachingFactory, MidwayCache } from '@midwayjs/cache-manager';
 import { MusicStudentEntity } from '../../music/entity/student';
+import { BaseSysRoleEntity } from '../../base/entity/sys/role';
+import { BaseSysDepartmentEntity } from '../../base/entity/sys/department';
+import { BaseSysUserEntity } from '../../base/entity/sys/user';
+import { BaseSysUserRoleEntity } from '../../base/entity/sys/user_role';
 
 /**
  * 登录
@@ -46,6 +50,18 @@ export class UserLoginService extends BaseService {
 
   @InjectClient(CachingFactory, 'default')
   midwayCache: MidwayCache;
+
+  @InjectEntityModel(BaseSysRoleEntity)
+  sysRoleEntity: Repository<BaseSysRoleEntity>;
+
+  @InjectEntityModel(BaseSysDepartmentEntity)
+  sysDepartmentEntity: Repository<BaseSysDepartmentEntity>;
+
+  @InjectEntityModel(BaseSysUserEntity)
+  sysUserEntity: Repository<BaseSysUserEntity>;
+
+  @InjectEntityModel(BaseSysUserRoleEntity)
+  sysUserRoleEntity: Repository<BaseSysUserRoleEntity>;
 
   /**
    * 发送手机验证码
@@ -133,9 +149,9 @@ export class UserLoginService extends BaseService {
     if (!phone) {
       throw new CoolCommException('注册已过期，请重新获取验证码');
     }
-    // 防止重复提交
     let user: any = await this.userInfoEntity.findOneBy({ phone: Equal(phone as string) });
     if (!user) {
+      // 1. 创建小程序用户
       const result = await this.userInfoEntity.insert({
         phone: phone as string,
         unionid: phone as string,
@@ -143,13 +159,63 @@ export class UserLoginService extends BaseService {
         nickName,
       });
       const userId = result.identifiers[0].id;
-      // 生成学员编号：S + 时间戳后6位
+
+      // 2. 创建学员记录
       const studentNo = 'S' + Date.now().toString().slice(-6);
       await this.musicStudentEntity.insert({ userId, specialty, studentNo });
+
+      // 3. 同步创建 admin 后台账号，并关联「学员」角色和「学员」部门
+      await this._createSysUser(phone as string, nickName, userId);
+
       user = await this.userInfoEntity.findOneBy({ id: userId });
     }
     await this.midwayCache.del(`register:${registerKey}`);
     return this.token({ id: user.id });
+  }
+
+  /**
+   * 同步创建 admin 系统用户，关联「学员」角色和「学员」部门
+   */
+  private async _createSysUser(phone: string, nickName: string, appUserId: number) {
+    // 获取或创建「学员」部门
+    let dept = await this.sysDepartmentEntity.findOneBy({ name: Equal('学员') });
+    if (!dept) {
+      const deptResult = await this.sysDepartmentEntity.insert({ name: '学员', orderNum: 99 });
+      dept = await this.sysDepartmentEntity.findOneBy({ id: deptResult.identifiers[0].id });
+    }
+
+    // 获取或创建「学员」角色
+    let role = await this.sysRoleEntity.findOneBy({ name: Equal('学员') });
+    if (!role) {
+      const roleResult = await this.sysRoleEntity.insert({
+        name: '学员',
+        label: 'student',
+        remark: '小程序学员',
+        relevance: false,
+        menuIdList: [],
+        departmentIdList: [],
+        userId: '1',
+      });
+      role = await this.sysRoleEntity.findOneBy({ id: roleResult.identifiers[0].id });
+    }
+
+    // 创建系统用户（用手机号作为 username，默认密码为手机号后6位）
+    const existSysUser = await this.sysUserEntity.findOneBy({ username: Equal(phone) });
+    if (!existSysUser) {
+      const password = md5(phone.slice(-6));
+      const sysUserResult = await this.sysUserEntity.insert({
+        username: phone,
+        password,
+        name: nickName,
+        phone,
+        nickName,
+        departmentId: dept.id,
+        status: 1,
+      });
+      const sysUserId = sysUserResult.identifiers[0].id;
+      // 关联角色
+      await this.sysUserRoleEntity.insert({ userId: sysUserId, roleId: role.id });
+    }
   }
 
   /**
