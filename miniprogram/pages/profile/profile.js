@@ -41,15 +41,14 @@ Page({
 
   _loadCaptcha() {
     wx.request({
-      url: CAPTCHA_URL + '?width=240&height=80',
+      url: CAPTCHA_URL + '?width=200&height=80',
       method: 'GET',
       success: (res) => {
         if (res.data && res.data.code === 1000) {
           const { captchaId, data } = res.data.data;
-          // data 是 svg+xml base64，用 rich-text 的 img 节点渲染
           const captchaNodes = [{
             name: 'img',
-            attrs: { src: data, style: 'width:200rpx;height:80rpx;display:block;' }
+            attrs: { src: data, style: 'width:100%;height:100%;display:block;' }
           }];
           this.setData({ captchaId, captchaNodes });
         }

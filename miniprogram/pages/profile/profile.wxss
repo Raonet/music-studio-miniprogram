@@ -412,7 +412,4 @@
   flex-shrink: 0;
   background-color: #2A2A34;
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
