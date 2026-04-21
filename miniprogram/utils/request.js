@@ -1,4 +1,4 @@
-const BASE_URL = 'http://127.0.0.1:8001';
+const BASE_URL = 'http://111.230.47.47/api';
 
 /**
  * 统一请求方法，自动携带 Authorization token

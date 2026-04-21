@@ -67,7 +67,7 @@ Page({
         }
         const jsCode = loginRes.code;
         wx.request({
-          url: 'http://127.0.0.1:8001/app/user/login/miniPhoneNew',
+          url: 'http://111.230.47.47/api/app/user/login/miniPhoneNew',
           method: 'POST',
           data: { jsCode, phoneCode },
           header: { 'Content-Type': 'application/json' },
