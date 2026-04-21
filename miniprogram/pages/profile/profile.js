@@ -7,7 +7,7 @@ Page({
     isLoggedIn: false,
     loginPhone: '',
     loginCode: '',
-    captchaUrl: '',
+    captchaNodes: [],
     captchaId: '',
     studentNo: '',
     specialty: '',
@@ -41,12 +41,17 @@ Page({
 
   _loadCaptcha() {
     wx.request({
-      url: CAPTCHA_URL + '?width=120&height=40',
+      url: CAPTCHA_URL + '?width=240&height=80',
       method: 'GET',
       success: (res) => {
         if (res.data && res.data.code === 1000) {
-          const { id, img } = res.data.data;
-          this.setData({ captchaId: id, captchaUrl: img });
+          const { captchaId, data } = res.data.data;
+          // data 是 svg+xml base64，用 rich-text 的 img 节点渲染
+          const captchaNodes = [{
+            name: 'img',
+            attrs: { src: data, style: 'width:200rpx;height:80rpx;display:block;' }
+          }];
+          this.setData({ captchaId, captchaNodes });
         }
       }
     });

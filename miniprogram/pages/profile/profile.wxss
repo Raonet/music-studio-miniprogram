@@ -404,11 +404,15 @@
   width: auto;
 }
 
-.captcha-img {
+.captcha-rich {
   width: 200rpx;
   height: 88rpx;
   border-radius: 20rpx;
   border: 1rpx solid #3A3A46;
   flex-shrink: 0;
   background-color: #2A2A34;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
