@@ -10,7 +10,6 @@
 
 		<cl-row>
 			<cl-table ref="Table">
-				<!-- 完成课程自定义按钮插槽 -->
 				<template #slot-finish="{ scope }">
 					<el-button
 						v-if="scope.row.status === 0"
@@ -52,17 +51,24 @@ const options = reactive({
 });
 
 const studentList = ref<any[]>([]);
+const teacherList = ref<any[]>([]);
 const courseList = ref<any[]>([]);
 const courseMap = ref<Record<number, any>>({});
 
 onMounted(async () => {
-	const [students, courses] = await Promise.all([
-		service.music.student.list(),
+	const [students, teachers, courses] = await Promise.all([
+		service.music.student.studentUsers(),
+		service.music.course.teacherUsers(),
 		service.music.course.list()
 	]);
 	studentList.value = (students || []).map((s: any) => ({
-		label: `${s.studentNo || s.id} ${s.specialty ? '(' + s.specialty + ')' : ''}`,
+		label: s.label,
 		value: s.id
+	}));
+	teacherList.value = (teachers || []).map((t: any) => ({
+		label: t.label,
+		value: t.name,
+		raw: t
 	}));
 	courseList.value = (courses || []).map((c: any) => ({
 		label: `${c.name}（${c.teacherName || '无教师'}）`,
@@ -74,7 +80,6 @@ onMounted(async () => {
 	courseMap.value = map;
 });
 
-// 标记已上课
 async function markFinish(row: any) {
 	await ElMessageBox.confirm(`确认将 [${row.courseName}] 标记为已上课？`, '提示', {
 		confirmButtonText: '确认',
@@ -89,23 +94,24 @@ async function markFinish(row: any) {
 const Table = useTable({
 	columns: [
 		{ type: 'selection', width: 60 },
-		{ label: '学员ID', prop: 'studentId', minWidth: 80 },
+		{ label: '学员', prop: 'studentId', minWidth: 100,
+			formatter: (row: any) => {
+				const s = studentList.value.find(s => s.value === row.studentId);
+				return s?.label || row.studentId;
+			}
+		},
 		{ label: '课程名称', prop: 'courseName', minWidth: 120 },
 		{ label: '教师', prop: 'teacherName', minWidth: 90 },
 		{ label: '教室', prop: 'room', minWidth: 80 },
 		{ label: '上课日期', prop: 'scheduleDate', minWidth: 110 },
-		{ label: '时间', prop: 'startTime', minWidth: 80,
+		{ label: '时间', prop: 'startTime', minWidth: 100,
 			formatter: (row: any) => `${row.startTime}~${row.endTime}`
 		},
 		{ label: '状态', prop: 'status', dict: options.status, minWidth: 90 },
 		{
 			type: 'op',
 			width: 220,
-			buttons: [
-				{ name: 'slot-finish' },
-				'edit',
-				'delete'
-			]
+			buttons: [{ name: 'slot-finish' }, 'edit', 'delete']
 		}
 	]
 });
@@ -152,8 +158,12 @@ const Upsert = useUpsert({
 		},
 		{
 			prop: 'teacherName',
-			label: '教师姓名',
-			component: { name: 'el-input' }
+			label: '教师',
+			component: {
+				name: 'el-select',
+				props: { placeholder: '可手动选择教师', filterable: true, style: 'width:100%' },
+				options: teacherList
+			}
 		},
 		{
 			prop: 'teacherAvatar',
@@ -180,10 +190,7 @@ const Upsert = useUpsert({
 			required: true,
 			component: {
 				name: 'el-time-select',
-				props: {
-					start: '08:00', step: '00:30', end: '22:00',
-					placeholder: '选择开始时间', style: 'width:100%'
-				}
+				props: { start: '08:00', step: '00:30', end: '22:00', placeholder: '选择开始时间', style: 'width:100%' }
 			}
 		},
 		{
@@ -192,10 +199,7 @@ const Upsert = useUpsert({
 			required: true,
 			component: {
 				name: 'el-time-select',
-				props: {
-					start: '08:30', step: '00:30', end: '22:30',
-					placeholder: '选择结束时间', style: 'width:100%'
-				}
+				props: { start: '08:30', step: '00:30', end: '22:30', placeholder: '选择结束时间', style: 'width:100%' }
 			}
 		},
 		{

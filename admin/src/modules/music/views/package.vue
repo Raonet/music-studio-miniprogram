@@ -42,9 +42,9 @@ const options = reactive({
 const studentList = ref<any[]>([]);
 
 onMounted(async () => {
-	const res = await service.music.student.list();
+	const res = await service.music.student.studentUsers();
 	studentList.value = (res || []).map((s: any) => ({
-		label: `${s.studentNo || s.id} ${s.specialty ? '(' + s.specialty + ')' : ''}`,
+		label: s.label,
 		value: s.id
 	}));
 });

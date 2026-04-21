@@ -20,11 +20,6 @@ export default (): ModuleConfig => {
 		},
 		views: [
 			{
-				path: '/music/student',
-				meta: { label: '学员管理' },
-				component: () => import('./views/student.vue')
-			},
-			{
 				path: '/music/course',
 				meta: { label: '课程管理' },
 				component: () => import('./views/course.vue')

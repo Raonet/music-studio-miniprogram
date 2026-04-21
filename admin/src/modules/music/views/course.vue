@@ -26,7 +26,7 @@ defineOptions({ name: 'music-course' });
 
 import { useCrud, useSearch, useTable, useUpsert } from '@cool-vue/crud';
 import { useCool } from '/@/cool';
-import { reactive, computed } from 'vue';
+import { reactive, ref, onMounted, computed } from 'vue';
 
 const { service, browser } = useCool();
 const dialogWidth = computed(() => (browser.isMobile ? '95%' : '500px'));
@@ -38,12 +38,22 @@ const options = reactive({
 	]
 });
 
+const teacherList = ref<any[]>([]);
+
+onMounted(async () => {
+	const res = await service.music.course.teacherUsers();
+	teacherList.value = (res || []).map((t: any) => ({
+		label: t.label,
+		value: t.name,
+		raw: t
+	}));
+});
+
 const Table = useTable({
 	columns: [
 		{ type: 'selection', width: 60 },
 		{ label: '课程名称', prop: 'name', minWidth: 130 },
-		{ label: '教师姓名', prop: 'teacherName', minWidth: 100 },
-		{ label: '教师头像', prop: 'teacherAvatar', minWidth: 80 },
+		{ label: '教师', prop: 'teacherName', minWidth: 100 },
 		{ label: '时长(分钟)', prop: 'duration', minWidth: 90 },
 		{ label: '状态', prop: 'status', dict: options.status, minWidth: 80 },
 		{ label: '创建时间', prop: 'createTime', sortable: 'desc', minWidth: 160 },
@@ -62,13 +72,28 @@ const Upsert = useUpsert({
 		},
 		{
 			prop: 'teacherName',
-			label: '教师姓名',
-			component: { name: 'el-input' }
+			label: '教师',
+			required: true,
+			component: {
+				name: 'el-select',
+				props: {
+					placeholder: '请选择教师',
+					filterable: true,
+					style: 'width:100%',
+					onChange: (val: string) => {
+						const t = teacherList.value.find(t => t.value === val);
+						if (t) {
+							Upsert.value?.setForm('teacherAvatar', t.raw.name?.charAt(0) || '');
+						}
+					}
+				},
+				options: teacherList
+			}
 		},
 		{
 			prop: 'teacherAvatar',
 			label: '教师头像(首字)',
-			component: { name: 'el-input', props: { maxlength: 1, placeholder: '取教师名第一个字' } }
+			component: { name: 'el-input', props: { maxlength: 1, placeholder: '自动填入，可手动修改' } }
 		},
 		{
 			prop: 'duration',
