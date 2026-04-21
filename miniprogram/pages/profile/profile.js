@@ -1,8 +1,14 @@
-const { get } = require('../../utils/request');
+const { get, BASE_URL } = require('../../utils/request');
+
+const CAPTCHA_URL = BASE_URL + '/app/user/login/captcha';
 
 Page({
   data: {
     isLoggedIn: false,
+    loginPhone: '',
+    loginCode: '',
+    captchaUrl: '',
+    captchaId: '',
     studentNo: '',
     specialty: '',
     avatarText: '',
@@ -28,7 +34,70 @@ Page({
     this.setData({ isLoggedIn });
     if (isLoggedIn) {
       this._loadProfile();
+    } else {
+      this._loadCaptcha();
     }
+  },
+
+  _loadCaptcha() {
+    wx.request({
+      url: CAPTCHA_URL + '?width=120&height=40',
+      method: 'GET',
+      success: (res) => {
+        if (res.data && res.data.code === 1000) {
+          const { id, img } = res.data.data;
+          this.setData({ captchaId: id, captchaUrl: img });
+        }
+      }
+    });
+  },
+
+  refreshCaptcha() {
+    this._loadCaptcha();
+  },
+
+  onPhoneInput(e) {
+    this.setData({ loginPhone: e.detail.value });
+  },
+
+  onCodeInput(e) {
+    this.setData({ loginCode: e.detail.value });
+  },
+
+  onLogin() {
+    const { loginPhone, loginCode, captchaId } = this.data;
+    if (!loginPhone || loginPhone.length !== 11) {
+      wx.showToast({ title: '请输入正确的手机号', icon: 'none' });
+      return;
+    }
+    if (!loginCode) {
+      wx.showToast({ title: '请输入验证码', icon: 'none' });
+      return;
+    }
+    wx.request({
+      url: BASE_URL + '/app/user/login/phoneCaptcha',
+      method: 'POST',
+      data: { phone: loginPhone, captchaId, code: loginCode },
+      header: { 'Content-Type': 'application/json' },
+      success: (res) => {
+        if (res.data && res.data.code === 1000 && res.data.data && res.data.data.token) {
+          const token = res.data.data.token;
+          wx.setStorageSync('token', token);
+          const app = getApp();
+          app.globalData.token = token;
+          app.globalData.isLoggedIn = true;
+          this.setData({ isLoggedIn: true, loginPhone: '', loginCode: '' });
+          this._loadProfile();
+          wx.showToast({ title: '登录成功', icon: 'success' });
+        } else {
+          this._loadCaptcha();
+          wx.showToast({ title: res.data?.message || '登录失败', icon: 'none' });
+        }
+      },
+      fail: () => {
+        wx.showToast({ title: '网络错误，请重试', icon: 'none' });
+      }
+    });
   },
 
   async _loadProfile() {
@@ -51,46 +120,6 @@ Page({
     } catch (e) {
       console.error('加载个人信息失败', e);
     }
-  },
-
-  onLogin(e) {
-    if (e.detail.errMsg !== 'getPhoneNumber:ok') {
-      wx.showToast({ title: '授权失败，请重试', icon: 'none' });
-      return;
-    }
-    const phoneCode = e.detail.code;
-    wx.login({
-      success: (loginRes) => {
-        if (!loginRes.code) {
-          wx.showToast({ title: '登录失败，请重试', icon: 'none' });
-          return;
-        }
-        const jsCode = loginRes.code;
-        wx.request({
-          url: 'http://111.230.47.47/api/app/user/login/miniPhoneNew',
-          method: 'POST',
-          data: { jsCode, phoneCode },
-          header: { 'Content-Type': 'application/json' },
-          success: (res) => {
-            if (res.data && res.data.code === 1000 && res.data.data && res.data.data.token) {
-              const token = res.data.data.token;
-              wx.setStorageSync('token', token);
-              const app = getApp();
-              app.globalData.token = token;
-              app.globalData.isLoggedIn = true;
-              this.setData({ isLoggedIn: true });
-              this._loadProfile();
-              wx.showToast({ title: '登录成功', icon: 'success' });
-            } else {
-              wx.showToast({ title: res.data?.message || '登录失败', icon: 'none' });
-            }
-          },
-          fail: () => {
-            wx.showToast({ title: '网络错误，请重试', icon: 'none' });
-          }
-        });
-      }
-    });
   },
 
   onMenuTap(e) {
@@ -117,6 +146,7 @@ Page({
           app.globalData.isLoggedIn = false;
           app.globalData.userInfo = null;
           this.setData({ isLoggedIn: false });
+          this._loadCaptcha();
           wx.showToast({ title: '已退出', icon: 'success' });
         }
       }

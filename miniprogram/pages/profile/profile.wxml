@@ -9,12 +9,19 @@
       </view>
       <text class="login-title">欢迎使用 Music Studio</text>
       <text class="login-desc">登录后查看个人信息、课时记录和课程安排</text>
-      <button
-        class="login-btn"
-        open-type="getPhoneNumber"
-        bindgetphonenumber="onLogin"
-      >
-        <text class="login-btn-text">微信一键登录</text>
+
+      <view class="login-form">
+        <view class="form-item">
+          <input class="form-input" type="number" maxlength="11" placeholder="请输入手机号" placeholder-class="form-placeholder" value="{{loginPhone}}" bindinput="onPhoneInput" />
+        </view>
+        <view class="form-item captcha-row">
+          <input class="form-input captcha-input" placeholder="请输入验证码" placeholder-class="form-placeholder" value="{{loginCode}}" bindinput="onCodeInput" />
+          <image class="captcha-img" src="{{captchaUrl}}" bindtap="refreshCaptcha" mode="aspectFit" />
+        </view>
+      </view>
+
+      <button class="login-btn" bindtap="onLogin">
+        <text class="login-btn-text">登录 / 注册</text>
       </button>
     </view>
 

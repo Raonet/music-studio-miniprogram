@@ -90,6 +90,16 @@ export class AppUserLoginController extends BaseController {
   }
 
   @CoolTag(TagTypes.IGNORE_TOKEN)
+  @Post('/phoneCaptcha', { summary: '手机号+图片验证码登录' })
+  async phoneCaptcha(
+    @Body('phone') phone: string,
+    @Body('captchaId') captchaId: string,
+    @Body('code') code: string
+  ) {
+    return this.ok(await this.userLoginService.phoneCaptcha(phone, captchaId, code));
+  }
+
+  @CoolTag(TagTypes.IGNORE_TOKEN)
   @Post('/miniPhoneNew', { summary: '微信小程序手机号一键登录' })
   async miniPhoneNew(
     @Body('jsCode') jsCode: string,

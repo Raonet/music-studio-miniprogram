@@ -100,6 +100,20 @@ export class UserLoginService extends BaseService {
   }
 
   /**
+   * 手机号 + 图片验证码登录（自动注册）
+   * @param phone
+   * @param captchaId
+   * @param code
+   */
+  async phoneCaptcha(phone: string, captchaId: string, code: string) {
+    const check = await this.baseSysLoginService.captchaCheck(captchaId, code);
+    if (!check) {
+      throw new CoolCommException('验证码错误');
+    }
+    return this.phone(phone);
+  }
+
+  /**
    * 手机登录
    * @param phone
    * @returns
