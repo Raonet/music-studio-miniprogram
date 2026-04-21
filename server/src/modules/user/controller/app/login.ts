@@ -100,6 +100,16 @@ export class AppUserLoginController extends BaseController {
   }
 
   @CoolTag(TagTypes.IGNORE_TOKEN)
+  @Post('/completeProfile', { summary: '新用户完善信息并注册' })
+  async completeProfile(
+    @Body('registerKey') registerKey: string,
+    @Body('nickName') nickName: string,
+    @Body('specialty') specialty: string
+  ) {
+    return this.ok(await this.userLoginService.completeProfile(registerKey, nickName, specialty));
+  }
+
+  @CoolTag(TagTypes.IGNORE_TOKEN)
   @Post('/miniPhoneNew', { summary: '微信小程序手机号一键登录' })
   async miniPhoneNew(
     @Body('jsCode') jsCode: string,

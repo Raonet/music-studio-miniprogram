@@ -1,5 +1,22 @@
 <navbar title="我的" showBack="{{false}}"></navbar>
 
+<!-- 新用户注册信息弹层 -->
+<view class="register-mask" wx:if="{{showRegisterForm}}">
+  <view class="register-panel">
+    <text class="register-title">完善个人信息</text>
+    <text class="register-desc">首次登录，请填写以下信息完成注册</text>
+    <view class="form-item" style="margin-top:40rpx;">
+      <input class="form-input" placeholder="请输入您的姓名" placeholder-class="form-placeholder" value="{{registerNickName}}" bindinput="onNickNameInput" />
+    </view>
+    <view class="form-item" style="margin-top:24rpx;">
+      <input class="form-input" placeholder="专长方向（如：钢琴、小提琴）" placeholder-class="form-placeholder" value="{{registerSpecialty}}" bindinput="onSpecialtyInput" />
+    </view>
+    <button class="login-btn" style="margin-top:48rpx;" bindtap="onCompleteProfile">
+      <text class="login-btn-text">完成注册</text>
+    </button>
+  </view>
+</view>
+
 <view class="page">
   <!-- 未登录态 -->
   <block wx:if="{{!isLoggedIn}}">

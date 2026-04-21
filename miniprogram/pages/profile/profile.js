@@ -5,10 +5,17 @@ const CAPTCHA_URL = BASE_URL + '/app/user/login/captcha';
 Page({
   data: {
     isLoggedIn: false,
+    // 登录表单
     loginPhone: '',
     loginCode: '',
     captchaNodes: [],
     captchaId: '',
+    // 新用户注册表单
+    showRegisterForm: false,
+    registerKey: '',
+    registerNickName: '',
+    registerSpecialty: '',
+    // 个人信息
     studentNo: '',
     specialty: '',
     avatarText: '',
@@ -78,30 +85,82 @@ Page({
       wx.showToast({ title: '请输入验证码', icon: 'none' });
       return;
     }
+    wx.showLoading({ title: '验证中...' });
     wx.request({
       url: BASE_URL + '/app/user/login/phoneCaptcha',
       method: 'POST',
       data: { phone: loginPhone, captchaId, code: loginCode },
       header: { 'Content-Type': 'application/json' },
       success: (res) => {
-        if (res.data && res.data.code === 1000 && res.data.data && res.data.data.token) {
-          const token = res.data.data.token;
-          wx.setStorageSync('token', token);
-          const app = getApp();
-          app.globalData.token = token;
-          app.globalData.isLoggedIn = true;
-          this.setData({ isLoggedIn: true, loginPhone: '', loginCode: '' });
-          this._loadProfile();
-          wx.showToast({ title: '登录成功', icon: 'success' });
+        wx.hideLoading();
+        if (res.data && res.data.code === 1000) {
+          const result = res.data.data;
+          if (result.isNew) {
+            // 新用户，弹出注册表单
+            this.setData({ showRegisterForm: true, registerKey: result.registerKey });
+          } else {
+            this._handleLoginSuccess(result.token);
+          }
         } else {
           this._loadCaptcha();
-          wx.showToast({ title: res.data?.message || '登录失败', icon: 'none' });
+          wx.showToast({ title: res.data?.message || '验证失败', icon: 'none' });
         }
       },
       fail: () => {
+        wx.hideLoading();
         wx.showToast({ title: '网络错误，请重试', icon: 'none' });
       }
     });
+  },
+
+  onNickNameInput(e) {
+    this.setData({ registerNickName: e.detail.value });
+  },
+
+  onSpecialtyInput(e) {
+    this.setData({ registerSpecialty: e.detail.value });
+  },
+
+  onCompleteProfile() {
+    const { registerKey, registerNickName, registerSpecialty } = this.data;
+    if (!registerNickName) {
+      wx.showToast({ title: '请输入姓名', icon: 'none' });
+      return;
+    }
+    if (!registerSpecialty) {
+      wx.showToast({ title: '请输入专长方向', icon: 'none' });
+      return;
+    }
+    wx.showLoading({ title: '注册中...' });
+    wx.request({
+      url: BASE_URL + '/app/user/login/completeProfile',
+      method: 'POST',
+      data: { registerKey, nickName: registerNickName, specialty: registerSpecialty },
+      header: { 'Content-Type': 'application/json' },
+      success: (res) => {
+        wx.hideLoading();
+        if (res.data && res.data.code === 1000 && res.data.data.token) {
+          this.setData({ showRegisterForm: false, registerNickName: '', registerSpecialty: '' });
+          this._handleLoginSuccess(res.data.data.token);
+          wx.showToast({ title: '注册成功', icon: 'success' });
+        } else {
+          wx.showToast({ title: res.data?.message || '注册失败', icon: 'none' });
+        }
+      },
+      fail: () => {
+        wx.hideLoading();
+        wx.showToast({ title: '网络错误，请重试', icon: 'none' });
+      }
+    });
+  },
+
+  _handleLoginSuccess(token) {
+    wx.setStorageSync('token', token);
+    const app = getApp();
+    app.globalData.token = token;
+    app.globalData.isLoggedIn = true;
+    this.setData({ isLoggedIn: true, loginPhone: '', loginCode: '' });
+    this._loadProfile();
   },
 
   async _loadProfile() {

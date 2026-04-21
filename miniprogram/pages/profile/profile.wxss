@@ -4,6 +4,43 @@
   padding: 32rpx 48rpx;
 }
 
+/* 注册弹层 */
+.register-mask {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0,0,0,0.7);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48rpx;
+  box-sizing: border-box;
+}
+
+.register-panel {
+  background-color: #22222A;
+  border-radius: 32rpx;
+  border: 1rpx solid #2E2D35;
+  padding: 64rpx 48rpx;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.register-title {
+  display: block;
+  font-size: 40rpx;
+  color: #F0EDE6;
+  font-weight: 600;
+  margin-bottom: 16rpx;
+}
+
+.register-desc {
+  display: block;
+  font-size: 26rpx;
+  color: #A89F8C;
+  line-height: 1.6;
+}
+
 /* 用户信息卡片 */
 .user-card {
   background-color: #22222A;

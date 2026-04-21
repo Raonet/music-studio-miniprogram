@@ -12,6 +12,8 @@ import { v1 as uuid } from 'uuid';
 import * as md5 from 'md5';
 import { PluginService } from '../../plugin/service/info';
 import axios from 'axios';
+import { CachingFactory, MidwayCache } from '@midwayjs/cache-manager';
+import { MusicStudentEntity } from '../../music/entity/student';
 
 /**
  * 登录
@@ -38,6 +40,12 @@ export class UserLoginService extends BaseService {
 
   @Inject()
   userSmsService: UserSmsService;
+
+  @InjectEntityModel(MusicStudentEntity)
+  musicStudentEntity: Repository<MusicStudentEntity>;
+
+  @InjectClient(CachingFactory, 'default')
+  midwayCache: MidwayCache;
 
   /**
    * 发送手机验证码
@@ -100,17 +108,48 @@ export class UserLoginService extends BaseService {
   }
 
   /**
-   * 手机号 + 图片验证码登录（自动注册）
-   * @param phone
-   * @param captchaId
-   * @param code
+   * 手机号 + 图片验证码登录，新用户返回 registerKey 要求补充信息
    */
   async phoneCaptcha(phone: string, captchaId: string, code: string) {
     const check = await this.baseSysLoginService.captchaCheck(captchaId, code);
     if (!check) {
       throw new CoolCommException('验证码错误');
     }
-    return this.phone(phone);
+    const user = await this.userInfoEntity.findOneBy({ phone: Equal(phone) });
+    if (!user) {
+      // 新用户：缓存手机号 10 分钟，返回 registerKey
+      const registerKey = uuid();
+      await this.midwayCache.set(`register:${registerKey}`, phone, 10 * 60 * 1000);
+      return { isNew: true, registerKey };
+    }
+    return { isNew: false, ...(await this.token({ id: user.id })) };
+  }
+
+  /**
+   * 新用户完善信息并注册
+   */
+  async completeProfile(registerKey: string, nickName: string, specialty: string) {
+    const phone = await this.midwayCache.get(`register:${registerKey}`);
+    if (!phone) {
+      throw new CoolCommException('注册已过期，请重新获取验证码');
+    }
+    // 防止重复提交
+    let user: any = await this.userInfoEntity.findOneBy({ phone: Equal(phone as string) });
+    if (!user) {
+      const result = await this.userInfoEntity.insert({
+        phone: phone as string,
+        unionid: phone as string,
+        loginType: 2,
+        nickName,
+      });
+      const userId = result.identifiers[0].id;
+      // 生成学员编号：S + 时间戳后6位
+      const studentNo = 'S' + Date.now().toString().slice(-6);
+      await this.musicStudentEntity.insert({ userId, specialty, studentNo });
+      user = await this.userInfoEntity.findOneBy({ id: userId });
+    }
+    await this.midwayCache.del(`register:${registerKey}`);
+    return this.token({ id: user.id });
   }
 
   /**
