@@ -1,10 +1,11 @@
 import { Init, Inject, Provide } from '@midwayjs/core';
 import { BaseService } from '@cool-midway/core';
 import { InjectEntityModel } from '@midwayjs/typeorm';
-import { Repository } from 'typeorm';
+import { Equal, Repository } from 'typeorm';
 import { MusicStudentEntity } from '../entity/student';
 import { MusicPackageEntity } from '../entity/package';
 import { MusicScheduleEntity } from '../entity/schedule';
+import { UserInfoEntity } from '../../user/entity/info';
 
 @Provide()
 export class MusicStudentService extends BaseService {
@@ -16,6 +17,9 @@ export class MusicStudentService extends BaseService {
 
   @InjectEntityModel(MusicScheduleEntity)
   scheduleEntity: Repository<MusicScheduleEntity>;
+
+  @InjectEntityModel(UserInfoEntity)
+  userInfoEntity: Repository<UserInfoEntity>;
 
   @Inject()
   ctx;
@@ -45,6 +49,9 @@ export class MusicStudentService extends BaseService {
   async profile(userId: number) {
     const student = await this.getOrCreate(userId);
 
+    // 获取用户基本信息
+    const userInfo = await this.userInfoEntity.findOneBy({ id: Equal(userId) });
+
     // 获取进行中的套餐
     const pkg = await this.packageEntity.findOne({
       where: { studentId: student.id, status: 1 },
@@ -61,6 +68,11 @@ export class MusicStudentService extends BaseService {
       totalLessons,
       usedLessons,
       remainingLessons,
+      // 用户基本信息
+      nickName: userInfo?.nickName || '',
+      phone: userInfo?.phone || '',
+      gender: userInfo?.gender ?? 0,
+      avatarUrl: userInfo?.avatarUrl || '',
       package: pkg
         ? {
             name: pkg.name,

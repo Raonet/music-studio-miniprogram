@@ -18,6 +18,9 @@ Page({
     // 个人信息
     studentNo: '',
     specialty: '',
+    nickName: '',
+    phone: '',
+    avatarUrl: '',
     avatarText: '',
     totalLessons: 0,
     usedLessons: 0,
@@ -173,7 +176,10 @@ Page({
       this.setData({
         studentNo: data.studentNo || '',
         specialty: data.specialty || '',
-        avatarText: data.specialty ? data.specialty.charAt(0) : '学',
+        nickName: data.nickName || '',
+        phone: data.phone || '',
+        avatarUrl: data.avatarUrl || '',
+        avatarText: data.nickName ? data.nickName.charAt(0) : (data.specialty ? data.specialty.charAt(0) : '学'),
         totalLessons: data.totalLessons,
         usedLessons: data.usedLessons,
         remainingLessons: data.remainingLessons,
@@ -187,7 +193,9 @@ Page({
 
   onMenuTap(e) {
     const action = e.currentTarget.dataset.action;
-    if (action === 'leave') {
+    if (action === 'info') {
+      wx.navigateTo({ url: '/pages/profile-edit/profile-edit' });
+    } else if (action === 'leave') {
       wx.navigateTo({ url: '/pages/leave-records/leave-records' });
     } else if (action === 'contact') {
       wx.makePhoneCall({ phoneNumber: '400-000-0000' });

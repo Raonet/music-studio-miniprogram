@@ -73,12 +73,13 @@
       <view class="user-card-inner">
         <view class="avatar-wrap">
           <view class="avatar">
-            <text class="avatar-text">{{avatarText}}</text>
+            <image wx:if="{{avatarUrl}}" class="avatar-full-img" src="{{avatarUrl}}" mode="aspectFill" />
+            <text wx:else class="avatar-text">{{avatarText}}</text>
           </view>
           <view class="avatar-gold-ring"></view>
         </view>
         <view class="user-info">
-          <text class="user-name">{{specialty || '同学'}}</text>
+          <text class="user-name">{{nickName || studentNo || '未设置姓名'}}</text>
           <text class="user-id">学员ID：{{studentNo}}</text>
           <view class="user-tag" wx:if="{{specialty}}">
             <text class="user-tag-text">{{specialty}}</text>

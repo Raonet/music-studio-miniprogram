@@ -6,7 +6,8 @@
     "pages/leave/leave",
     "pages/leave-records/leave-records",
     "pages/messages/messages",
-    "pages/profile/profile"
+    "pages/profile/profile",
+    "pages/profile-edit/profile-edit"
   ],
   "tabBar": {
     "custom": true,
