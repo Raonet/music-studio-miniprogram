@@ -160,9 +160,9 @@ export class UserLoginService extends BaseService {
       });
       const userId = result.identifiers[0].id;
 
-      // 2. 创建学员记录
+      // 2. 创建学员记录（contactPhone 初始化为注册手机号）
       const studentNo = 'S' + Date.now().toString().slice(-6);
-      await this.musicStudentEntity.insert({ userId, specialty, studentNo });
+      await this.musicStudentEntity.insert({ userId, specialty, studentNo, contactPhone: phone as string });
 
       // 3. 同步创建 admin 后台账号，并关联「学员」角色和「学员」部门
       await this._createSysUser(phone as string, nickName, userId);

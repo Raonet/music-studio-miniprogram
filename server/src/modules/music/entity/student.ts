@@ -16,4 +16,7 @@ export class MusicStudentEntity extends BaseEntity {
 
   @Column({ comment: '专长方向', nullable: true })
   specialty: string;
+
+  @Column({ comment: '联系手机号（展示用，不影响登录）', nullable: true })
+  contactPhone: string;
 }

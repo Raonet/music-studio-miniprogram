@@ -4,7 +4,7 @@ Page({
   data: {
     // 表单数据
     nickName: '',
-    phone: '',
+    contactPhone: '',
     gender: 0,
     avatarUrl: '',
     specialty: '',          // 逗号分隔的多选值，如 "钢琴,小提琴"
@@ -51,7 +51,7 @@ Page({
 
       this.setData({
         nickName: profile.nickName || '',
-        phone: profile.phone || '',
+        contactPhone: profile.contactPhone || '',
         gender: profile.gender ?? 0,
         avatarUrl: profile.avatarUrl || '',
         specialty: profile.specialty || '',
@@ -70,7 +70,7 @@ Page({
   },
 
   onPhoneInput(e) {
-    this.setData({ phone: e.detail.value });
+    this.setData({ contactPhone: e.detail.value });
   },
 
   onGenderChange(e) {
@@ -116,7 +116,7 @@ Page({
   },
 
   async onSave() {
-    const { nickName, phone, gender, avatarUrl, specialty, saving } = this.data;
+    const { nickName, contactPhone, gender, avatarUrl, specialty, saving } = this.data;
     if (saving) return;
     if (!nickName) {
       wx.showToast({ title: '请输入姓名', icon: 'none' });
@@ -125,7 +125,7 @@ Page({
     this.setData({ saving: true });
     try {
       await post('/app/music/student/updateProfile', {
-        nickName, phone, gender, avatarUrl, specialty,
+        nickName, contactPhone, gender, avatarUrl, specialty,
       });
       wx.showToast({ title: '保存成功', icon: 'success' });
       // 通知上一页刷新

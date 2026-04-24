@@ -38,7 +38,7 @@
         maxlength="11"
         placeholder="请输入手机号"
         placeholder-class="field-placeholder"
-        value="{{phone}}"
+        value="{{contactPhone}}"
         bindinput="onPhoneInput"
       />
     </view>

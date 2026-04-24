@@ -27,27 +27,29 @@ export class AppMusicStudentController extends BaseController {
   @Put('/updateProfile', { summary: '更新个人信息' })
   async updateProfile(
     @Body('nickName') nickName: string,
-    @Body('phone') phone: string,
+    @Body('contactPhone') contactPhone: string,
     @Body('gender') gender: number,
     @Body('avatarUrl') avatarUrl: string,
     @Body('specialty') specialty: string,
   ) {
     const userId = this.ctx.user.id;
 
-    // 更新 user_info
+    // 更新 user_info（nickName、gender、avatarUrl）
     const updateUser: any = {};
     if (nickName !== undefined) updateUser.nickName = nickName;
-    if (phone !== undefined) updateUser.phone = phone;
     if (gender !== undefined) updateUser.gender = gender;
     if (avatarUrl !== undefined) updateUser.avatarUrl = avatarUrl;
     if (Object.keys(updateUser).length > 0) {
       await this.userInfoEntity.update(userId, updateUser);
     }
 
-    // 更新 music_student.specialty
-    if (specialty !== undefined) {
-      const student = await this.musicStudentService.getOrCreate(userId);
-      await this.musicStudentService.studentEntity.update(student.id, { specialty });
+    // 更新 music_student（specialty、contactPhone）
+    const student = await this.musicStudentService.getOrCreate(userId);
+    const updateStudent: any = {};
+    if (specialty !== undefined) updateStudent.specialty = specialty;
+    if (contactPhone !== undefined) updateStudent.contactPhone = contactPhone;
+    if (Object.keys(updateStudent).length > 0) {
+      await this.musicStudentService.studentEntity.update(student.id, updateStudent);
     }
 
     return this.ok();
