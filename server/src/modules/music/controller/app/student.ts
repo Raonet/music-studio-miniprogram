@@ -1,5 +1,5 @@
 import { CoolController, BaseController } from '@cool-midway/core';
-import { Body, Get, Inject, Post, Put } from '@midwayjs/core';
+import { Body, Get, Inject, Post } from '@midwayjs/core';
 import { MusicStudentService } from '../../service/student';
 import { InjectEntityModel } from '@midwayjs/typeorm';
 import { Repository } from 'typeorm';
@@ -24,7 +24,7 @@ export class AppMusicStudentController extends BaseController {
     return this.ok(await this.musicStudentService.profile(this.ctx.user.id));
   }
 
-  @Put('/updateProfile', { summary: '更新个人信息' })
+  @Post('/updateProfile', { summary: '更新个人信息' })
   async updateProfile(
     @Body('nickName') nickName: string,
     @Body('contactPhone') contactPhone: string,

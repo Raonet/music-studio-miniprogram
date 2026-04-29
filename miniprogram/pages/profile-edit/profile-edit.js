@@ -20,6 +20,12 @@ Page({
   },
 
   onLoad() {
+    const app = getApp();
+    if (!app.globalData.isLoggedIn) {
+      wx.showToast({ title: '请先登录', icon: 'none' });
+      setTimeout(() => wx.navigateBack(), 1500);
+      return;
+    }
     this._loadData();
   },
 

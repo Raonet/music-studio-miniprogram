@@ -6,12 +6,6 @@ export default {
 
 	// 请求地址
 	get baseUrl() {
-		const mode = import.meta.env.MODE;
-
-		if (mode == 'static') {
-			return location.origin;
-		} else {
-			return '/api';
-		}
+		return 'https://111.230.47.47/api';
 	}
 };
