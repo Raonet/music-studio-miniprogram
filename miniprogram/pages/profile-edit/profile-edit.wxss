@@ -145,9 +145,6 @@
   border-radius: 100rpx;
   background-color: #2A2A34;
   border: 1rpx solid #3A3A46;
-}
-
-.specialty-tag text {
   font-size: 26rpx;
   color: #A89F8C;
 }
@@ -155,9 +152,6 @@
 .specialty-tag-active {
   background-color: rgba(201,168,76,0.15);
   border-color: rgba(201,168,76,0.6);
-}
-
-.specialty-tag-active text {
   color: #C9A84C;
 }
 

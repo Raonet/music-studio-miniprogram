@@ -75,9 +75,7 @@
         class="specialty-tag {{specialtyArr.indexOf(item.value) >= 0 ? 'specialty-tag-active' : ''}}"
         data-value="{{item.value}}"
         bindtap="onSpecialtyToggle"
-      >
-        <text>{{item.label}}</text>
-      </view>
+      >{{item.label}}</view>
     </view>
   </view>
 
