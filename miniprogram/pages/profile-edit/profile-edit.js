@@ -52,6 +52,7 @@ Page({
         const specialtyOptions = (dictRes['musicSpecialty'] || []).map(item => ({
           label: item.name,
           value: item.name,
+          selected: false,
         }));
         this.setData({ specialtyOptions });
       }
@@ -62,6 +63,11 @@ Page({
         const specialtyArr = profile.specialty
           ? profile.specialty.split(',').map(s => s.trim()).filter(Boolean)
           : [];
+        // 同步 specialtyOptions 的 selected 状态
+        const specialtyOptions = this.data.specialtyOptions.map(opt => ({
+          ...opt,
+          selected: specialtyArr.indexOf(opt.value) >= 0,
+        }));
         this.setData({
           nickName: profile.nickName || '',
           contactPhone: profile.contactPhone || '',
@@ -69,6 +75,7 @@ Page({
           avatarUrl: profile.avatarUrl || '',
           specialty: profile.specialty || '',
           specialtyArr,
+          specialtyOptions,
         });
       } else {
         wx.showToast({ title: '加载个人信息失败', icon: 'none' });
@@ -99,7 +106,11 @@ Page({
     } else {
       arr.push(val);
     }
-    this.setData({ specialtyArr: arr, specialty: arr.join(',') });
+    const specialtyOptions = this.data.specialtyOptions.map(opt => ({
+      ...opt,
+      selected: arr.indexOf(opt.value) >= 0,
+    }));
+    this.setData({ specialtyArr: arr, specialty: arr.join(','), specialtyOptions });
   },
 
   chooseAvatar() {

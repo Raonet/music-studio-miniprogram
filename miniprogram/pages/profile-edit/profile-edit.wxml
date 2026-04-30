@@ -72,7 +72,7 @@
       <view
         wx:for="{{specialtyOptions}}"
         wx:key="value"
-        class="specialty-tag {{specialtyArr.indexOf(item.value) >= 0 ? 'specialty-tag-active' : ''}}"
+        class="specialty-tag {{item.selected ? 'specialty-tag-active' : ''}}"
         data-value="{{item.value}}"
         bindtap="onSpecialtyToggle"
       >{{item.label}}</view>
