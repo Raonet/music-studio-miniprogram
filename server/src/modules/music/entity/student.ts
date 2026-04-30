@@ -11,12 +11,12 @@ export class MusicStudentEntity extends BaseEntity {
   userId: number;
 
   @Index({ unique: true })
-  @Column({ comment: '学员编号', nullable: true })
+  @Column({ name: 'student_no', comment: '学员编号', nullable: true })
   studentNo: string;
 
   @Column({ comment: '专长方向', nullable: true })
   specialty: string;
 
-  @Column({ comment: '联系手机号（展示用，不影响登录）', nullable: true })
+  @Column({ name: 'contact_phone', comment: '联系手机号（展示用，不影响登录）', nullable: true })
   contactPhone: string;
 }
