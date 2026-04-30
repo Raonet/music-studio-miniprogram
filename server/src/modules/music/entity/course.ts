@@ -9,10 +9,10 @@ export class MusicCourseEntity extends BaseEntity {
   @Column({ comment: '课程名称' })
   name: string;
 
-  @Column({ name: 'teacher_name', comment: '教师姓名', nullable: true })
+  @Column({ comment: '教师姓名', nullable: true })
   teacherName: string;
 
-  @Column({ name: 'teacher_avatar', comment: '教师头像(首字)', length: 4, nullable: true })
+  @Column({ comment: '教师头像(首字)', length: 4, nullable: true })
   teacherAvatar: string;
 
   @Column({ comment: '课程时长(分钟)', default: 60 })

@@ -38,11 +38,11 @@ export class MusicStudentService extends BaseService {
   /** 检查并补全 music_student 表缺失的列 */
   private async _ensureColumns() {
     const columns = await this.dataSource.query(
-      `SHOW COLUMNS FROM music_student LIKE 'contact_phone'`
+      `SHOW COLUMNS FROM music_student LIKE 'contactPhone'`
     );
     if (columns.length === 0) {
       await this.dataSource.query(
-        `ALTER TABLE music_student ADD COLUMN contact_phone VARCHAR(255) NULL COMMENT '联系手机号（展示用，不影响登录）'`
+        `ALTER TABLE music_student ADD COLUMN contactPhone VARCHAR(255) NULL COMMENT '联系手机号（展示用，不影响登录）'`
       );
     }
   }

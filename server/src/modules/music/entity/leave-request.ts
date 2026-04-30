@@ -7,13 +7,13 @@ import { Column, Entity, Index } from 'typeorm';
 @Entity('music_leave_request')
 export class MusicLeaveRequestEntity extends BaseEntity {
   @Index()
-  @Column({ name: 'student_id', comment: '学员ID' })
+  @Column({ comment: '学员ID' })
   studentId: number;
 
-  @Column({ name: 'course_name', comment: '课程名称' })
+  @Column({ comment: '课程名称' })
   courseName: string;
 
-  @Column({ name: 'leave_date', comment: '请假日期', type: 'varchar', length: 10 })
+  @Column({ comment: '请假日期', type: 'varchar', length: 10 })
   leaveDate: string;
 
   @Column({ comment: '请假原因', type: 'text', nullable: true })
