@@ -144,15 +144,16 @@
   padding: 12rpx 32rpx;
   border-radius: 100rpx;
   background-color: #2A2A34;
-  border: 1rpx solid #3A3A46;
+  border: 2rpx solid #3A3A46;
   font-size: 26rpx;
   color: #A89F8C;
 }
 
 .specialty-tag-active {
-  background-color: rgba(201,168,76,0.15);
-  border-color: rgba(201,168,76,0.6);
-  color: #C9A84C;
+  background-color: #C9A84C !important;
+  border-color: #C9A84C !important;
+  color: #1A1A1F !important;
+  font-weight: 600;
 }
 
 .empty-dict {
