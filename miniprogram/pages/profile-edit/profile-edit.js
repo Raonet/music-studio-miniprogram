@@ -32,7 +32,7 @@ Page({
   async _loadData() {
     wx.showLoading({ title: '加载中...' });
     try {
-      const [profile, dictRes] = await Promise.all([
+      const [profileResult, dictResult] = await Promise.allSettled([
         get('/app/music/student/profile'),
         new Promise((resolve) => {
           wx.request({
@@ -46,26 +46,33 @@ Page({
         }),
       ]);
 
-      const specialtyOptions = (dictRes['musicSpecialty'] || []).map(item => ({
-        label: item.name,
-        value: item.name,
-      }));
+      // 字典数据独立处理，不受 profile 请求影响
+      if (dictResult.status === 'fulfilled') {
+        const dictRes = dictResult.value;
+        const specialtyOptions = (dictRes['musicSpecialty'] || []).map(item => ({
+          label: item.name,
+          value: item.name,
+        }));
+        this.setData({ specialtyOptions });
+      }
 
-      const specialtyArr = profile.specialty
-        ? profile.specialty.split(',').map(s => s.trim()).filter(Boolean)
-        : [];
-
-      this.setData({
-        nickName: profile.nickName || '',
-        contactPhone: profile.contactPhone || '',
-        gender: profile.gender ?? 0,
-        avatarUrl: profile.avatarUrl || '',
-        specialty: profile.specialty || '',
-        specialtyArr,
-        specialtyOptions,
-      });
-    } catch (e) {
-      wx.showToast({ title: '加载失败', icon: 'none' });
+      // profile 数据
+      if (profileResult.status === 'fulfilled') {
+        const profile = profileResult.value;
+        const specialtyArr = profile.specialty
+          ? profile.specialty.split(',').map(s => s.trim()).filter(Boolean)
+          : [];
+        this.setData({
+          nickName: profile.nickName || '',
+          contactPhone: profile.contactPhone || '',
+          gender: profile.gender ?? 0,
+          avatarUrl: profile.avatarUrl || '',
+          specialty: profile.specialty || '',
+          specialtyArr,
+        });
+      } else {
+        wx.showToast({ title: '加载个人信息失败', icon: 'none' });
+      }
     } finally {
       wx.hideLoading();
     }

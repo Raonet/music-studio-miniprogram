@@ -1,7 +1,8 @@
 import { Init, Inject, Provide } from '@midwayjs/core';
 import { BaseService } from '@cool-midway/core';
 import { InjectEntityModel } from '@midwayjs/typeorm';
-import { Equal, Repository } from 'typeorm';
+import { InjectDataSource } from '@midwayjs/typeorm';
+import { DataSource, Equal, Repository } from 'typeorm';
 import { MusicStudentEntity } from '../entity/student';
 import { MusicPackageEntity } from '../entity/package';
 import { MusicScheduleEntity } from '../entity/schedule';
@@ -21,6 +22,9 @@ export class MusicStudentService extends BaseService {
   @InjectEntityModel(UserInfoEntity)
   userInfoEntity: Repository<UserInfoEntity>;
 
+  @InjectDataSource()
+  dataSource: DataSource;
+
   @Inject()
   ctx;
 
@@ -28,6 +32,19 @@ export class MusicStudentService extends BaseService {
   async init() {
     await super.init();
     this.setEntity(this.studentEntity);
+    await this._ensureColumns();
+  }
+
+  /** 检查并补全 music_student 表缺失的列 */
+  private async _ensureColumns() {
+    const columns = await this.dataSource.query(
+      `SHOW COLUMNS FROM music_student LIKE 'contact_phone'`
+    );
+    if (columns.length === 0) {
+      await this.dataSource.query(
+        `ALTER TABLE music_student ADD COLUMN contact_phone VARCHAR(255) NULL COMMENT '联系手机号（展示用，不影响登录）'`
+      );
+    }
   }
 
   /**
