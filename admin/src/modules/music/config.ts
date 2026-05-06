@@ -31,8 +31,13 @@ export default (): ModuleConfig => {
 			},
 			{
 				path: '/music/schedule',
-				meta: { label: '排课管理' },
-				component: () => import('./views/schedule.vue')
+				meta: { label: '排课日历' },
+				component: () => import('./views/schedule-calendar.vue')
+			},
+			{
+				path: '/music/schedule-teacher',
+				meta: { label: '教师总览' },
+				component: () => import('./views/schedule-teacher.vue')
 			},
 			{
 				path: '/music/leave',
