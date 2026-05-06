@@ -9,8 +9,6 @@
 				<span>{{ app.info.name }}</span>
 			</div>
 
-			<p class="desc">{{ $t('快速开发后台权限管理系统') }}</p>
-
 			<div class="form">
 				<el-form label-position="top" class="form" :disabled="saving">
 					<el-form-item :label="$t('用户名')">
@@ -66,7 +64,7 @@
 			<cl-svg name="bg"></cl-svg>
 		</div>
 
-		<a href="https://cool-js.com" class="copyright"> Copyright © COOL </a>
+			<a href="https://beian.miit.gov.cn" target="_blank" class="copyright">晋ICP备2026005412号</a>
 	</div>
 </template>
 
