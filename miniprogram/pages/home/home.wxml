@@ -3,10 +3,11 @@
   <view class="header" style="padding-top: {{statusBarHeight + 24}}px;">
     <view class="header-left">
       <text class="greeting">{{greeting}}</text>
-      <text class="username">{{isLoggedIn ? '同学' : '访客'}}</text>
+      <text class="username">{{isLoggedIn && nickName ? nickName : '同学'}}</text>
     </view>
     <view class="avatar">
-      <text class="avatar-text">乐</text>
+      <image wx:if="{{isLoggedIn && avatarUrl}}" class="avatar-img" src="{{avatarUrl}}" mode="aspectFill" />
+      <text wx:else class="avatar-text">{{isLoggedIn ? avatarText : '乐'}}</text>
     </view>
   </view>
 

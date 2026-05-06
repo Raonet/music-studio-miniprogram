@@ -13,6 +13,9 @@ Page({
     packageProgress: 0,
     expireDate: '',
     greeting: '你好',
+    nickName: '',
+    avatarUrl: '',
+    avatarText: '乐',
   },
 
   onLoad() {
@@ -42,6 +45,9 @@ Page({
         recentLessons: [],
         remainingLessons: 0,
         totalLessons: 0,
+        nickName: '',
+        avatarUrl: '',
+        avatarText: '乐',
       });
     }
   },
@@ -72,6 +78,11 @@ Page({
         updates.packageProgress = profile.totalLessons > 0
           ? Math.round(profile.usedLessons / profile.totalLessons * 100)
           : 0;
+        updates.nickName = profile.nickName || '';
+        updates.avatarUrl = profile.avatarUrl || '';
+        updates.avatarText = profile.nickName
+          ? profile.nickName.charAt(0)
+          : (profile.specialty ? profile.specialty.charAt(0) : '乐');
       }
 
       this.setData(updates);
