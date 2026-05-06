@@ -1,12 +1,12 @@
 const proxy = {
 	'/dev/': {
-		target: 'http://111.230.47.47',
+		target: 'https://www.xiaobai.site',
 		changeOrigin: true,
 		rewrite: (path: string) => path.replace(/^\/dev/, '/api')
 	},
 
 	'/prod/': {
-		target: 'http://111.230.47.47',
+		target: 'https://www.xiaobai.site',
 		changeOrigin: true,
 		rewrite: (path: string) => path.replace(/^\/prod/, '/api')
 	}

@@ -1,4 +1,4 @@
-const BASE_URL = 'http://111.230.47.47/api';
+const BASE_URL = 'https://www.xiaobai.site/api';
 
 // tabBar 页面列表，退出登录态后这些页面只刷新不跳转
 const TAB_BAR_PAGES = [

@@ -6,6 +6,6 @@ export default {
 
 	// 请求地址
 	get baseUrl() {
-		return 'https://111.230.47.47/api';
+		return 'https://www.xiaobai.site/api';
 	}
 };
