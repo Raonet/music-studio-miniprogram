@@ -93,8 +93,8 @@ export class BaseAuthorityMiddleware
             new RegExp(`^${adminUrl}?.*/comm/`).test(url) ||
             // 字典接口
             url == '/admin/dict/info/data' ||
-            // 音乐统计接口（所有登录用户可访问）
-            url.startsWith('/admin/music/stat/')
+            // 音乐模块接口（所有登录用户可访问）
+            url.startsWith('/admin/music/')
           ) {
             await next();
             return;
