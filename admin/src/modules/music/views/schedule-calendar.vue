@@ -106,15 +106,11 @@
 						start="08:00" step="00:30" end="22:00"
 						placeholder="开始时间"
 						style="width:100%"
+						@change="calcBatchEndTime"
 					/>
 				</el-form-item>
 				<el-form-item label="结束时间">
-					<el-time-select
-						v-model="batchForm.endTime"
-						start="08:30" step="00:30" end="22:30"
-						placeholder="结束时间"
-						style="width:100%"
-					/>
+					<el-input :value="batchForm.endTime" disabled placeholder="根据课程时长自动计算" />
 				</el-form-item>
 				<el-form-item label="日期范围">
 					<el-date-picker
@@ -171,15 +167,11 @@
 						start="08:00" step="00:30" end="22:00"
 						placeholder="开始时间"
 						style="width:100%"
+						@change="calcAddEndTime"
 					/>
 				</el-form-item>
 				<el-form-item label="结束时间">
-					<el-time-select
-						v-model="addForm.endTime"
-						start="08:30" step="00:30" end="22:30"
-						placeholder="结束时间"
-						style="width:100%"
-					/>
+					<el-input :value="addForm.endTime" disabled placeholder="根据课程时长自动计算" />
 				</el-form-item>
 			</el-form>
 			<template #footer>
@@ -323,7 +315,7 @@ function onCellClick(day: any) {
 		ElMessage.warning('请先选择学员');
 		return;
 	}
-	addForm.value = { scheduleDate: day.date, courseId: null, courseName: '', teacherName: '', teacherAvatar: '', room: '', startTime: '', endTime: '' };
+	addForm.value = { scheduleDate: day.date, courseId: null, courseName: '', teacherName: '', teacherAvatar: '', room: '', startTime: '', endTime: '', duration: 60 };
 	addDialogVisible.value = true;
 }
 
@@ -345,12 +337,21 @@ const batchDialogVisible = ref(false);
 const batchLoading = ref(false);
 const batchForm = ref<any>({
 	courseId: null, courseName: '', teacherName: '', teacherAvatar: '',
-	room: '', weekdays: [], startTime: '', endTime: '', dateRange: []
+	room: '', weekdays: [], startTime: '', endTime: '', dateRange: [], duration: 60
 });
 
 function openBatchDialog() {
-	batchForm.value = { courseId: null, courseName: '', teacherName: '', teacherAvatar: '', room: '', weekdays: [], startTime: '', endTime: '', dateRange: [] };
+	batchForm.value = { courseId: null, courseName: '', teacherName: '', teacherAvatar: '', room: '', weekdays: [], startTime: '', endTime: '', dateRange: [], duration: 60 };
 	batchDialogVisible.value = true;
+}
+
+function calcEndTime(startTime: string, duration: number): string {
+	if (!startTime || !duration) return '';
+	const [h, m] = startTime.split(':').map(Number);
+	const totalMin = h * 60 + m + duration;
+	const eh = Math.floor(totalMin / 60);
+	const em = totalMin % 60;
+	return `${pad(eh)}:${pad(em)}`;
 }
 
 function onBatchCourseChange(val: number) {
@@ -359,7 +360,13 @@ function onBatchCourseChange(val: number) {
 		batchForm.value.courseName = c.name;
 		batchForm.value.teacherName = c.teacherName || '';
 		batchForm.value.teacherAvatar = c.teacherAvatar || '';
+		batchForm.value.duration = c.duration || 60;
+		if (batchForm.value.startTime) calcBatchEndTime(batchForm.value.startTime);
 	}
+}
+
+function calcBatchEndTime(startTime: string) {
+	batchForm.value.endTime = calcEndTime(startTime, batchForm.value.duration || 60);
 }
 
 async function submitBatch() {
@@ -397,7 +404,7 @@ async function submitBatch() {
 // 单节新增
 const addDialogVisible = ref(false);
 const addLoading = ref(false);
-const addForm = ref<any>({ scheduleDate: '', courseId: null, courseName: '', teacherName: '', teacherAvatar: '', room: '', startTime: '', endTime: '' });
+const addForm = ref<any>({ scheduleDate: '', courseId: null, courseName: '', teacherName: '', teacherAvatar: '', room: '', startTime: '', endTime: '', duration: 60 });
 
 function onAddCourseChange(val: number) {
 	const c = courseMap.value[val];
@@ -405,7 +412,13 @@ function onAddCourseChange(val: number) {
 		addForm.value.courseName = c.name;
 		addForm.value.teacherName = c.teacherName || '';
 		addForm.value.teacherAvatar = c.teacherAvatar || '';
+		addForm.value.duration = c.duration || 60;
+		if (addForm.value.startTime) calcAddEndTime(addForm.value.startTime);
 	}
+}
+
+function calcAddEndTime(startTime: string) {
+	addForm.value.endTime = calcEndTime(startTime, addForm.value.duration || 60);
 }
 
 async function submitAdd() {
