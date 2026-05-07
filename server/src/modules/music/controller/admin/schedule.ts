@@ -1,8 +1,9 @@
-import { CoolController, BaseController } from '@cool-midway/core';
+import { CoolCommException, CoolController, BaseController } from '@cool-midway/core';
 import { Body, Get, Inject, Post, Query } from '@midwayjs/core';
 import { InjectEntityModel } from '@midwayjs/typeorm';
 import { Between, Repository } from 'typeorm';
 import { MusicScheduleEntity } from '../../entity/schedule';
+import { MusicTeacherService } from '../../service/teacher';
 
 /**
  * 排课管理 - Admin
@@ -20,20 +21,29 @@ export class AdminMusicScheduleController extends BaseController {
   @InjectEntityModel(MusicScheduleEntity)
   scheduleEntity: Repository<MusicScheduleEntity>;
 
+  @Inject()
+  musicTeacherService: MusicTeacherService;
+
   /** 按学员+月份查询排课，用于日历视图 */
   @Get('/byStudent', { summary: '按学员和月份查询排课' })
   async byStudent(
     @Query('studentId') studentId: number,
-    @Query('month') month: string, // YYYY-MM
+    @Query('month') month: string,
   ) {
     if (!studentId || !month) return this.ok([]);
+
+    // 教师角色只能查自己学员的排课
+    if (await this.musicTeacherService.isTeacher()) {
+      const myIds = await this.musicTeacherService.getMyStudentIds();
+      if (!myIds.includes(Number(studentId))) {
+        throw new CoolCommException('无权查看该学员排课', 403);
+      }
+    }
+
     const dateFrom = `${month}-01`;
     const dateTo = `${month}-31`;
     const list = await this.scheduleEntity.find({
-      where: {
-        studentId: Number(studentId),
-        scheduleDate: Between(dateFrom, dateTo),
-      },
+      where: { studentId: Number(studentId), scheduleDate: Between(dateFrom, dateTo) },
       order: { scheduleDate: 'ASC', startTime: 'ASC' },
     });
     return this.ok(list);
@@ -43,10 +53,14 @@ export class AdminMusicScheduleController extends BaseController {
   @Get('/byTeacher', { summary: '按教师和周查询排课' })
   async byTeacher(
     @Query('teacherName') teacherName: string,
-    @Query('weekStart') weekStart: string, // YYYY-MM-DD 周一
+    @Query('weekStart') weekStart: string,
   ) {
+    // 教师角色强制使用自己的姓名
+    if (await this.musicTeacherService.isTeacher()) {
+      teacherName = await this.musicTeacherService.getTeacherName();
+    }
     if (!teacherName || !weekStart) return this.ok([]);
-    // 计算周日日期
+
     const start = new Date(weekStart);
     const end = new Date(start);
     end.setDate(start.getDate() + 6);
@@ -71,12 +85,21 @@ export class AdminMusicScheduleController extends BaseController {
     @Body('teacherName') teacherName: string,
     @Body('teacherAvatar') teacherAvatar: string,
     @Body('room') room: string,
-    @Body('weekdays') weekdays: number[], // 0=周日 1=周一 ... 6=周六
+    @Body('weekdays') weekdays: number[],
     @Body('startTime') startTime: string,
     @Body('endTime') endTime: string,
-    @Body('dateFrom') dateFrom: string, // YYYY-MM-DD
-    @Body('dateTo') dateTo: string,     // YYYY-MM-DD
+    @Body('dateFrom') dateFrom: string,
+    @Body('dateTo') dateTo: string,
   ) {
+    // 教师角色校验学员归属，并强制使用自己的姓名
+    if (await this.musicTeacherService.isTeacher()) {
+      const myIds = await this.musicTeacherService.getMyStudentIds();
+      if (!myIds.includes(Number(studentId))) {
+        throw new CoolCommException('无权给该学员排课', 403);
+      }
+      teacherName = await this.musicTeacherService.getTeacherName();
+    }
+
     const from = new Date(dateFrom);
     const to = new Date(dateTo);
     const records: Partial<MusicScheduleEntity>[] = [];
@@ -85,23 +108,12 @@ export class AdminMusicScheduleController extends BaseController {
     for (let d = new Date(from); d <= to; d.setDate(d.getDate() + 1)) {
       if (weekdays.includes(d.getDay())) {
         const dateStr = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-        records.push({
-          studentId: Number(studentId),
-          courseName,
-          teacherName,
-          teacherAvatar,
-          room,
-          scheduleDate: dateStr,
-          startTime,
-          endTime,
-          status: 0,
-        });
+        records.push({ studentId: Number(studentId), courseName, teacherName, teacherAvatar, room, scheduleDate: dateStr, startTime, endTime, status: 0 });
       }
     }
 
-    if (records.length > 0) {
-      await this.scheduleEntity.insert(records);
-    }
+    if (records.length > 0) await this.scheduleEntity.insert(records);
     return this.ok({ created: records.length });
   }
 }
+

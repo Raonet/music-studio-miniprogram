@@ -3,6 +3,7 @@
 		<!-- 工具栏 -->
 		<div class="toolbar">
 			<el-select
+				v-if="!isTeacher"
 				v-model="selectedTeacher"
 				placeholder="请选择教师"
 				filterable
@@ -12,6 +13,7 @@
 			>
 				<el-option v-for="t in teacherList" :key="t.value" :label="t.label" :value="t.value" />
 			</el-select>
+			<span v-else class="teacher-name-label">{{ selectedTeacher }}</span>
 
 			<div class="week-nav">
 				<el-button :icon="ArrowLeft" circle @click="changeWeek(-1)" />
@@ -78,6 +80,7 @@ const { service } = useCool();
 
 const selectedTeacher = ref('');
 const teacherList = ref<any[]>([]);
+const isTeacher = ref(false);
 const schedules = ref<any[]>([]);
 const studentMap = ref<Record<number, string>>({});
 
@@ -183,6 +186,10 @@ function statusLabel(status: number) {
 }
 
 onMounted(async () => {
+	// 获取当前用户角色信息
+	const myInfo = await service.music.teacherStudent.request({ url: '/myInfo', method: 'GET' });
+	isTeacher.value = myInfo?.isTeacher || false;
+
 	const [teachers, students] = await Promise.all([
 		service.music.course.teacherUsers(),
 		service.music.student.studentUsers(),
@@ -192,8 +199,11 @@ onMounted(async () => {
 	(students || []).forEach((s: any) => { map[s.id] = s.label; });
 	studentMap.value = map;
 
-	// 默认选中第一个教师
-	if (teacherList.value.length > 0) {
+	if (isTeacher.value) {
+		// 教师角色直接用自己的姓名
+		selectedTeacher.value = myInfo.teacherName;
+		loadSchedules();
+	} else if (teacherList.value.length > 0) {
 		selectedTeacher.value = teacherList.value[0].value;
 		loadSchedules();
 	}
@@ -217,6 +227,12 @@ onMounted(async () => {
 	display: flex;
 	align-items: center;
 	gap: 8px;
+}
+
+.teacher-name-label {
+	font-size: 15px;
+	font-weight: 600;
+	color: #303133;
 }
 
 .week-label {

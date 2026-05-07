@@ -5,6 +5,7 @@ import MusicPackageService from './service/package';
 import MusicScheduleService from './service/schedule';
 import MusicLeaveService from './service/leave';
 import MusicStatService from './service/stat';
+import MusicTeacherStudentService from './service/teacher-student';
 
 export default (): ModuleConfig => {
 	return {
@@ -17,6 +18,7 @@ export default (): ModuleConfig => {
 					schedule: new MusicScheduleService(),
 					leave: new MusicLeaveService(),
 					stat: new MusicStatService(),
+					teacherStudent: new MusicTeacherStudentService(),
 				};
 			}
 		},
@@ -50,6 +52,11 @@ export default (): ModuleConfig => {
 				path: '/music/leave',
 				meta: { label: '请假审批' },
 				component: () => import('./views/leave.vue')
+			},
+			{
+				path: '/music/teacher-student',
+				meta: { label: '教师学员关联' },
+				component: () => import('./views/teacher-student.vue')
 			}
 		]
 	};

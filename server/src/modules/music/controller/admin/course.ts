@@ -1,17 +1,18 @@
 import { CoolController, BaseController } from '@cool-midway/core';
-import { Get, Inject } from '@midwayjs/core';
+import { Body, Get, Inject, Post, Put } from '@midwayjs/core';
 import { InjectEntityModel } from '@midwayjs/typeorm';
 import { Equal, Repository } from 'typeorm';
 import { MusicCourseEntity } from '../../entity/course';
 import { BaseSysRoleEntity } from '../../../base/entity/sys/role';
 import { BaseSysUserEntity } from '../../../base/entity/sys/user';
 import { BaseSysUserRoleEntity } from '../../../base/entity/sys/user_role';
+import { MusicTeacherService } from '../../service/teacher';
 
 /**
  * 课程管理 - Admin
  */
 @CoolController({
-  api: ['add', 'delete', 'update', 'info', 'list', 'page'],
+  api: ['delete', 'info', 'list', 'page'],
   entity: MusicCourseEntity,
   pageQueryOp: {
     keyWordLikeFields: ['a.name', 'a.teacherName'],
@@ -19,6 +20,9 @@ import { BaseSysUserRoleEntity } from '../../../base/entity/sys/user_role';
   },
 })
 export class AdminMusicCourseController extends BaseController {
+  @InjectEntityModel(MusicCourseEntity)
+  courseEntity: Repository<MusicCourseEntity>;
+
   @InjectEntityModel(BaseSysRoleEntity)
   sysRoleEntity: Repository<BaseSysRoleEntity>;
 
@@ -28,10 +32,34 @@ export class AdminMusicCourseController extends BaseController {
   @InjectEntityModel(BaseSysUserRoleEntity)
   sysUserRoleEntity: Repository<BaseSysUserRoleEntity>;
 
+  @Inject()
+  musicTeacherService: MusicTeacherService;
+
+  /** 新增课程，教师角色强制锁定自己为教师 */
+  @Post('/add', { summary: '新增课程' })
+  async add(@Body() body: any) {
+    if (await this.musicTeacherService.isTeacher()) {
+      body.teacherName = await this.musicTeacherService.getTeacherName();
+      body.teacherAvatar = body.teacherName?.charAt(0) || '';
+    }
+    const result = await this.courseEntity.insert(body);
+    return this.ok(result.identifiers[0]);
+  }
+
+  /** 编辑课程，教师角色强制锁定自己为教师 */
+  @Put('/update', { summary: '编辑课程' })
+  async update(@Body() body: any) {
+    if (await this.musicTeacherService.isTeacher()) {
+      body.teacherName = await this.musicTeacherService.getTeacherName();
+      body.teacherAvatar = body.teacherName?.charAt(0) || '';
+    }
+    await this.courseEntity.update(body.id, body);
+    return this.ok();
+  }
+
   /** 获取 teacher 角色账号列表（没有角色则自动创建） */
   @Get('/teacherUsers', { summary: '教师账号列表（用于选择器）' })
   async teacherUsers() {
-    // 获取或创建 teacher 角色
     let role = await this.sysRoleEntity.findOneBy({ label: Equal('teacher') });
     if (!role) {
       const result = await this.sysRoleEntity.insert({
@@ -46,7 +74,6 @@ export class AdminMusicCourseController extends BaseController {
       role = await this.sysRoleEntity.findOneBy({ id: result.identifiers[0].id });
     }
 
-    // 查找该角色下的用户
     const userRoles = await this.sysUserRoleEntity.findBy({ roleId: Equal(role.id) });
     if (!userRoles.length) return this.ok([]);
 
@@ -57,11 +84,7 @@ export class AdminMusicCourseController extends BaseController {
       .select(['u.id AS id', 'u.name AS name', 'u.phone AS phone'])
       .getRawMany();
 
-    const data = users.map(u => ({
-      id: u.id,
-      label: u.name || u.phone,
-      name: u.name,
-    }));
-    return this.ok(data);
+    return this.ok(users.map(u => ({ id: u.id, label: u.name || u.phone, name: u.name })));
   }
 }
+

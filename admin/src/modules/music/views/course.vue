@@ -26,7 +26,7 @@ defineOptions({ name: 'music-course' });
 
 import { useCrud, useSearch, useTable, useUpsert } from '@cool-vue/crud';
 import { useCool } from '/@/cool';
-import { reactive, ref, onMounted, computed } from 'vue';
+import { reactive, ref, onMounted, computed, watch } from 'vue';
 
 const { service, browser } = useCool();
 const dialogWidth = computed(() => (browser.isMobile ? '95%' : '500px'));
@@ -39,9 +39,16 @@ const options = reactive({
 });
 
 const teacherList = ref<any[]>([]);
+const isTeacher = ref(false);
+const myTeacherName = ref('');
 
 onMounted(async () => {
-	const res = await service.music.course.teacherUsers();
+	const [myInfo, res] = await Promise.all([
+		service.music.teacherStudent.request({ url: '/myInfo', method: 'GET' }),
+		service.music.course.teacherUsers(),
+	]);
+	isTeacher.value = myInfo?.isTeacher || false;
+	myTeacherName.value = myInfo?.teacherName || '';
 	teacherList.value = (res || []).map((t: any) => ({
 		label: t.label,
 		value: t.name,
@@ -80,6 +87,7 @@ const Upsert = useUpsert({
 					placeholder: '请选择教师',
 					filterable: true,
 					style: 'width:100%',
+					disabled: isTeacher,
 					onChange: (val: string) => {
 						const t = teacherList.value.find(t => t.value === val);
 						if (t) {
@@ -122,4 +130,12 @@ const Search = useSearch({
 const Crud = useCrud({ service: service.music.course }, app => {
 	app.refresh();
 });
+
+// 教师角色打开新增/编辑时自动填入自己
+watch(() => Upsert.value?.form, (form) => {
+	if (form && isTeacher.value && !form.teacherName) {
+		Upsert.value?.setForm('teacherName', myTeacherName.value);
+		Upsert.value?.setForm('teacherAvatar', myTeacherName.value?.charAt(0) || '');
+	}
+}, { deep: true });
 </script>

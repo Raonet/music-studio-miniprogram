@@ -204,9 +204,10 @@ const { service } = useCool();
 const selectedStudentId = ref<number | null>(null);
 const selectedStatus = ref<number | null>(null);
 const currentYear = ref(new Date().getFullYear());
-const currentMonth = ref(new Date().getMonth() + 1); // 1-12
+const currentMonth = ref(new Date().getMonth() + 1);
 const schedules = ref<any[]>([]);
 const allSchedules = ref<any[]>([]);
+const isTeacher = ref(false);
 const studentList = ref<any[]>([]);
 const courseList = ref<any[]>([]);
 const courseMap = ref<Record<number, any>>({});
@@ -434,8 +435,15 @@ async function submitAdd() {
 }
 
 onMounted(async () => {
+	// 获取当前用户角色信息
+	const myInfo = await service.music.teacherStudent.request({ url: '/myInfo', method: 'GET' });
+	isTeacher.value = myInfo?.isTeacher || false;
+
 	const [students, courses] = await Promise.all([
-		service.music.student.studentUsers(),
+		// 教师角色只加载自己的学员
+		isTeacher.value
+			? service.music.teacherStudent.request({ url: '/myStudents', method: 'GET' })
+			: service.music.student.studentUsers(),
 		service.music.course.list()
 	]);
 	studentList.value = (students || []).map((s: any) => ({ label: s.label, value: s.id }));
