@@ -36,7 +36,7 @@
           <text class="reason-text">{{item.reason}}</text>
         </view>
         <view class="record-bottom" wx:if="{{item.remark}}">
-          <text class="submitted-text">备注：{{item.remark}}</text>
+          <text class="submitted-text">回复：{{item.remark}}</text>
         </view>
       </view>
     </view>
