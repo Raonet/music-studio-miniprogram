@@ -92,7 +92,9 @@ export class BaseAuthorityMiddleware
           if (
             new RegExp(`^${adminUrl}?.*/comm/`).test(url) ||
             // 字典接口
-            url == '/admin/dict/info/data'
+            url == '/admin/dict/info/data' ||
+            // 音乐统计接口（所有登录用户可访问）
+            url.startsWith('/admin/music/stat/')
           ) {
             await next();
             return;
