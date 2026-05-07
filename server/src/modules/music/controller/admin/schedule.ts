@@ -24,6 +24,38 @@ export class AdminMusicScheduleController extends BaseController {
   @Inject()
   musicTeacherService: MusicTeacherService;
 
+  /** 按月份查询所有排课，用于日历视图 */
+  @Get('/byMonth', { summary: '按月份查询所有排课' })
+  async byMonth(
+    @Query('month') month: string,
+    @Query('teacherName') teacherName?: string,
+  ) {
+    if (!month) return this.ok([]);
+    const dateFrom = `${month}-01`;
+    const dateTo = `${month}-31`;
+
+    if (await this.musicTeacherService.isTeacher()) {
+      // 教师角色只能看自己的排课
+      const myIds = await this.musicTeacherService.getMyStudentIds();
+      if (!myIds.length) return this.ok([]);
+      const list = await this.scheduleEntity.find({
+        where: myIds.map(id => ({ studentId: id, scheduleDate: Between(dateFrom, dateTo) })),
+        order: { scheduleDate: 'ASC', startTime: 'ASC' },
+      });
+      return this.ok(list);
+    }
+
+    // 管理员：可按教师名过滤
+    const qb = this.scheduleEntity.createQueryBuilder('s')
+      .where('s.scheduleDate BETWEEN :from AND :to', { from: dateFrom, to: dateTo })
+      .orderBy('s.scheduleDate', 'ASC')
+      .addOrderBy('s.startTime', 'ASC');
+    if (teacherName) {
+      qb.andWhere('s.teacherName = :teacherName', { teacherName });
+    }
+    return this.ok(await qb.getMany());
+  }
+
   /** 按学员+月份查询排课，用于日历视图 */
   @Get('/byStudent', { summary: '按学员和月份查询排课' })
   async byStudent(

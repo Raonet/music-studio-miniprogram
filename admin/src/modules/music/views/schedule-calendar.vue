@@ -3,22 +3,24 @@
 		<!-- 工具栏 -->
 		<div class="toolbar">
 			<el-select
-				v-model="selectedStudentId"
-				placeholder="请选择学员"
+				v-if="!isTeacher"
+				v-model="selectedTeacherName"
+				placeholder="全部教师"
 				filterable
 				clearable
-				style="width: 220px"
+				style="width: 180px"
 				@change="loadSchedules"
 			>
-				<el-option v-for="s in studentList" :key="s.value" :label="s.label" :value="s.value" />
+				<el-option v-for="t in teacherList" :key="t.value" :label="t.label" :value="t.value" />
 			</el-select>
+			<span v-else class="teacher-name-label">{{ selectedTeacherName }}</span>
 
 			<el-select
 				v-model="selectedStatus"
 				placeholder="全部状态"
 				clearable
 				style="width: 130px"
-				@change="loadSchedules"
+				@change="applyStatusFilter"
 			>
 				<el-option label="待上课" :value="0" />
 				<el-option label="已上课" :value="1" />
@@ -34,7 +36,7 @@
 				<el-button @click="goToday">今天</el-button>
 			</div>
 
-			<el-button type="primary" :disabled="!selectedStudentId" @click="openBatchDialog">
+			<el-button type="primary" @click="openBatchDialog">
 				快速排课
 			</el-button>
 		</div>
@@ -75,6 +77,16 @@
 		<!-- 快速排课弹窗 -->
 		<el-dialog v-model="batchDialogVisible" title="快速排课" width="520px" destroy-on-close>
 			<el-form :model="batchForm" label-width="90px">
+				<el-form-item label="选择学员">
+					<el-select
+						v-model="batchForm.studentId"
+						placeholder="请选择学员"
+						filterable
+						style="width:100%"
+					>
+						<el-option v-for="s in studentList" :key="s.value" :label="s.label" :value="s.value" />
+					</el-select>
+				</el-form-item>
 				<el-form-item label="选择课程">
 					<el-select
 						v-model="batchForm.courseId"
@@ -133,6 +145,17 @@
 		<!-- 单节课新增/编辑弹窗 -->
 		<el-dialog v-model="addDialogVisible" :title="addForm.id ? '编辑排课' : '新增排课'" width="480px" destroy-on-close>
 			<el-form :model="addForm" label-width="90px">
+				<el-form-item label="选择学员">
+					<el-select
+						v-model="addForm.studentId"
+						placeholder="请选择学员"
+						filterable
+						style="width:100%"
+						:disabled="!!addForm.id"
+					>
+						<el-option v-for="s in studentList" :key="s.value" :label="s.label" :value="s.value" />
+					</el-select>
+				</el-form-item>
 				<el-form-item label="上课日期">
 					<el-date-picker
 						v-model="addForm.scheduleDate"
@@ -193,8 +216,9 @@ import { useCool } from '/@/cool';
 const { service } = useCool();
 
 // 状态
-const selectedStudentId = ref<number | null>(null);
 const selectedStatus = ref<number | null>(null);
+const selectedTeacherName = ref<string>('');
+const teacherList = ref<any[]>();
 const currentYear = ref(new Date().getFullYear());
 const currentMonth = ref(new Date().getMonth() + 1);
 const schedules = ref<any[]>([]);
@@ -273,12 +297,13 @@ function statusClass(status: number) {
 }
 
 async function loadSchedules() {
-	if (!selectedStudentId.value) { schedules.value = []; allSchedules.value = []; return; }
 	const month = `${currentYear.value}-${pad(currentMonth.value)}`;
+	const params: any = { month };
+	if (selectedTeacherName.value) params.teacherName = selectedTeacherName.value;
 	const data = await service.music.schedule.request({
-		url: '/byStudent',
+		url: '/byMonth',
 		method: 'GET',
-		params: { studentId: selectedStudentId.value, month }
+		params,
 	});
 	allSchedules.value = data || [];
 	applyStatusFilter();
@@ -311,11 +336,7 @@ function goToday() {
 
 // 点击空白格 → 新增
 function onCellClick(day: any) {
-	if (!selectedStudentId.value) {
-		ElMessage.warning('请先选择学员');
-		return;
-	}
-	addForm.value = { id: null, scheduleDate: day.date, courseId: null, courseName: '', teacherName: '', teacherAvatar: '', room: '', startTime: '', endTime: '', duration: 60 };
+	addForm.value = { id: null, studentId: null, scheduleDate: day.date, courseId: null, courseName: '', teacherName: '', teacherAvatar: '', room: '', startTime: '', endTime: '', duration: 60 };
 	addDialogVisible.value = true;
 }
 
@@ -336,6 +357,7 @@ async function onLessonClick(lesson: any) {
 		// 点「编辑」
 		addForm.value = {
 			id: lesson.id,
+			studentId: lesson.studentId,
 			scheduleDate: lesson.scheduleDate,
 			courseId: null,
 			courseName: lesson.courseName,
@@ -362,12 +384,12 @@ async function onLessonClick(lesson: any) {
 const batchDialogVisible = ref(false);
 const batchLoading = ref(false);
 const batchForm = ref<any>({
-	courseId: null, courseName: '', teacherName: '', teacherAvatar: '',
+	studentId: null, courseId: null, courseName: '', teacherName: '', teacherAvatar: '',
 	room: '', weekdays: [], startTime: '', endTime: '', dateRange: [], duration: 60
 });
 
 function openBatchDialog() {
-	batchForm.value = { courseId: null, courseName: '', teacherName: '', teacherAvatar: '', room: '', weekdays: [], startTime: '', endTime: '', dateRange: [], duration: 60 };
+	batchForm.value = { studentId: null, courseId: null, courseName: '', teacherName: '', teacherAvatar: '', room: '', weekdays: [], startTime: '', endTime: '', dateRange: [], duration: 60 };
 	batchDialogVisible.value = true;
 }
 
@@ -397,6 +419,7 @@ function calcBatchEndTime(startTime: string) {
 
 async function submitBatch() {
 	const f = batchForm.value;
+	if (!f.studentId) return ElMessage.warning('请选择学员');
 	if (!f.courseName) return ElMessage.warning('请选择或填写课程名称');
 	if (!f.weekdays.length) return ElMessage.warning('请选择重复星期');
 	if (!f.startTime || !f.endTime) return ElMessage.warning('请选择上课时间');
@@ -407,7 +430,7 @@ async function submitBatch() {
 			url: '/batchCreate',
 			method: 'POST',
 			data: {
-				studentId: selectedStudentId.value,
+				studentId: f.studentId,
 				courseName: f.courseName,
 				teacherName: f.teacherName,
 				teacherAvatar: f.teacherAvatar,
@@ -430,7 +453,7 @@ async function submitBatch() {
 // 单节新增
 const addDialogVisible = ref(false);
 const addLoading = ref(false);
-const addForm = ref<any>({ id: null, scheduleDate: '', courseId: null, courseName: '', teacherName: '', teacherAvatar: '', room: '', startTime: '', endTime: '', duration: 60 });
+const addForm = ref<any>({ id: null, studentId: null, scheduleDate: '', courseId: null, courseName: '', teacherName: '', teacherAvatar: '', room: '', startTime: '', endTime: '', duration: 60 });
 
 function onAddCourseChange(val: number) {
 	const c = courseMap.value[val];
@@ -449,6 +472,7 @@ function calcAddEndTime(startTime: string) {
 
 async function submitAdd() {
 	const f = addForm.value;
+	if (!f.id && !f.studentId) return ElMessage.warning('请选择学员');
 	if (!f.scheduleDate || !f.courseName || !f.startTime || !f.endTime) {
 		return ElMessage.warning('请填写完整信息');
 	}
@@ -468,7 +492,7 @@ async function submitAdd() {
 			ElMessage.success('修改成功');
 		} else {
 			await service.music.schedule.add({
-				studentId: selectedStudentId.value,
+				studentId: f.studentId,
 				scheduleDate: f.scheduleDate,
 				courseName: f.courseName,
 				teacherName: f.teacherName,
@@ -492,14 +516,16 @@ onMounted(async () => {
 	const myInfo = await service.music.teacherStudent.request({ url: '/myInfo', method: 'GET' });
 	isTeacher.value = myInfo?.isTeacher || false;
 
-	const [students, courses] = await Promise.all([
+	const [students, courses, teachers] = await Promise.all([
 		// 教师角色只加载自己的学员
 		isTeacher.value
 			? service.music.teacherStudent.request({ url: '/myStudents', method: 'GET' })
 			: service.music.student.studentUsers(),
-		service.music.course.list()
+		service.music.course.list(),
+		service.music.course.teacherUsers(),
 	]);
 	studentList.value = (students || []).map((s: any) => ({ label: s.label, value: s.id }));
+	teacherList.value = (teachers || []).map((t: any) => ({ label: t.label, value: t.name }));
 	courseList.value = (courses || []).map((c: any) => ({
 		label: `${c.name}（${c.teacherName || '无教师'}）`,
 		value: c.id,
@@ -509,11 +535,11 @@ onMounted(async () => {
 	(courses || []).forEach((c: any) => { map[c.id] = c; });
 	courseMap.value = map;
 
-	// 默认选中第一个学员
-	if (studentList.value.length > 0) {
-		selectedStudentId.value = studentList.value[0].value;
-		loadSchedules();
+	if (isTeacher.value) {
+		selectedTeacherName.value = myInfo.teacherName || '';
 	}
+
+	loadSchedules();
 });
 </script>
 
@@ -541,6 +567,12 @@ onMounted(async () => {
 	font-weight: 600;
 	min-width: 120px;
 	text-align: center;
+}
+
+.teacher-name-label {
+	font-size: 15px;
+	font-weight: 600;
+	color: #303133;
 }
 
 .calendar-wrap {
