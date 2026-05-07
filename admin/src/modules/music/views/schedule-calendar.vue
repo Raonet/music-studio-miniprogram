@@ -13,6 +13,20 @@
 				<el-option v-for="s in studentList" :key="s.value" :label="s.label" :value="s.value" />
 			</el-select>
 
+			<el-select
+				v-model="selectedStatus"
+				placeholder="全部状态"
+				clearable
+				style="width: 130px"
+				@change="loadSchedules"
+			>
+				<el-option label="待上课" :value="0" />
+				<el-option label="已上课" :value="1" />
+				<el-option label="已请假" :value="2" />
+				<el-option label="待补课" :value="3" />
+				<el-option label="已取消" :value="4" />
+			</el-select>
+
 			<div class="month-nav">
 				<el-button :icon="ArrowLeft" circle @click="changeMonth(-1)" />
 				<span class="month-label">{{ currentMonthLabel }}</span>
@@ -188,9 +202,11 @@ const { service } = useCool();
 
 // 状态
 const selectedStudentId = ref<number | null>(null);
+const selectedStatus = ref<number | null>(null);
 const currentYear = ref(new Date().getFullYear());
 const currentMonth = ref(new Date().getMonth() + 1); // 1-12
 const schedules = ref<any[]>([]);
+const allSchedules = ref<any[]>([]);
 const studentList = ref<any[]>([]);
 const courseList = ref<any[]>([]);
 const courseMap = ref<Record<number, any>>({});
@@ -264,14 +280,23 @@ function statusClass(status: number) {
 }
 
 async function loadSchedules() {
-	if (!selectedStudentId.value) { schedules.value = []; return; }
+	if (!selectedStudentId.value) { schedules.value = []; allSchedules.value = []; return; }
 	const month = `${currentYear.value}-${pad(currentMonth.value)}`;
 	const data = await service.music.schedule.request({
 		url: '/byStudent',
 		method: 'GET',
 		params: { studentId: selectedStudentId.value, month }
 	});
-	schedules.value = data || [];
+	allSchedules.value = data || [];
+	applyStatusFilter();
+}
+
+function applyStatusFilter() {
+	if (selectedStatus.value === null || selectedStatus.value === undefined) {
+		schedules.value = allSchedules.value;
+	} else {
+		schedules.value = allSchedules.value.filter(s => s.status === selectedStatus.value);
+	}
 }
 
 function changeMonth(delta: number) {
