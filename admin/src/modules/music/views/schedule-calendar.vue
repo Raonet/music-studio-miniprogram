@@ -422,6 +422,12 @@ onMounted(async () => {
 	const map: Record<number, any> = {};
 	(courses || []).forEach((c: any) => { map[c.id] = c; });
 	courseMap.value = map;
+
+	// 默认选中第一个学员
+	if (studentList.value.length > 0) {
+		selectedStudentId.value = studentList.value[0].value;
+		loadSchedules();
+	}
 });
 </script>
 

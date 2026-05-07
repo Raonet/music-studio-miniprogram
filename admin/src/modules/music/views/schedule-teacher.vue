@@ -191,6 +191,12 @@ onMounted(async () => {
 	const map: Record<number, string> = {};
 	(students || []).forEach((s: any) => { map[s.id] = s.label; });
 	studentMap.value = map;
+
+	// 默认选中第一个教师
+	if (teacherList.value.length > 0) {
+		selectedTeacher.value = teacherList.value[0].value;
+		loadSchedules();
+	}
 });
 </script>
 
