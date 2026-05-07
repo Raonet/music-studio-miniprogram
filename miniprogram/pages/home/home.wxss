@@ -329,9 +329,36 @@
   background-color: rgba(76,175,125,0.2);
 }
 
+.status-badge.completed .status-text {
+  color: #4CAF7D;
+}
+
+.status-badge.leave {
+  background-color: rgba(230,162,60,0.2);
+}
+
+.status-badge.leave .status-text {
+  color: #E6A23C;
+}
+
+.status-badge.makeup {
+  background-color: rgba(144,147,153,0.2);
+}
+
+.status-badge.makeup .status-text {
+  color: #909399;
+}
+
+.status-badge.pending {
+  background-color: rgba(64,158,255,0.2);
+}
+
+.status-badge.pending .status-text {
+  color: #409EFF;
+}
+
 .status-text {
   font-size: 20rpx;
-  color: #4CAF7D;
 }
 
 .lesson-meta {

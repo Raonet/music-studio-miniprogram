@@ -104,8 +104,8 @@
           <view class="lesson-card-left">
             <view class="lesson-name-row">
               <text class="lesson-name">{{item.type}}</text>
-              <view class="status-badge completed">
-                <text class="status-text">已上课</text>
+              <view class="status-badge {{item.status === '已上课' ? 'completed' : item.status === '已请假' ? 'leave' : item.status === '待补课' ? 'makeup' : 'pending'}}">
+                <text class="status-text">{{item.status}}</text>
               </view>
             </view>
             <view class="lesson-meta">
