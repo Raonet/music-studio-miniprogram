@@ -4,6 +4,7 @@ import MusicCourseService from './service/course';
 import MusicPackageService from './service/package';
 import MusicScheduleService from './service/schedule';
 import MusicLeaveService from './service/leave';
+import MusicStatService from './service/stat';
 
 export default (): ModuleConfig => {
 	return {
@@ -14,11 +15,17 @@ export default (): ModuleConfig => {
 					course: new MusicCourseService(),
 					package: new MusicPackageService(),
 					schedule: new MusicScheduleService(),
-					leave: new MusicLeaveService()
+					leave: new MusicLeaveService(),
+					stat: new MusicStatService(),
 				};
 			}
 		},
 		views: [
+			{
+				path: '/music/home',
+				meta: { label: '统计看板', isHome: true },
+				component: () => import('./views/home.vue')
+			},
 			{
 				path: '/music/course',
 				meta: { label: '课程管理' },
