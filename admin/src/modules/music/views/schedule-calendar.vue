@@ -130,8 +130,8 @@
 			</template>
 		</el-dialog>
 
-		<!-- 单节课新增弹窗 -->
-		<el-dialog v-model="addDialogVisible" title="新增排课" width="480px" destroy-on-close>
+		<!-- 单节课新增/编辑弹窗 -->
+		<el-dialog v-model="addDialogVisible" :title="addForm.id ? '编辑排课' : '新增排课'" width="480px" destroy-on-close>
 			<el-form :model="addForm" label-width="90px">
 				<el-form-item label="上课日期">
 					<el-date-picker
@@ -315,21 +315,47 @@ function onCellClick(day: any) {
 		ElMessage.warning('请先选择学员');
 		return;
 	}
-	addForm.value = { scheduleDate: day.date, courseId: null, courseName: '', teacherName: '', teacherAvatar: '', room: '', startTime: '', endTime: '', duration: 60 };
+	addForm.value = { id: null, scheduleDate: day.date, courseId: null, courseName: '', teacherName: '', teacherAvatar: '', room: '', startTime: '', endTime: '', duration: 60 };
 	addDialogVisible.value = true;
 }
 
 // 点击课程 → 取消
 async function onLessonClick(lesson: any) {
 	if (lesson.status === 4) return;
-	await ElMessageBox.confirm(
-		`确认取消 [${lesson.scheduleDate} ${lesson.startTime} ${lesson.courseName}]？`,
-		'取消排课',
-		{ confirmButtonText: '确认取消', cancelButtonText: '返回', type: 'warning' }
-	);
-	await service.music.schedule.update({ id: lesson.id, status: 4 });
-	ElMessage.success('已取消');
-	loadSchedules();
+	try {
+		await ElMessageBox.confirm(
+			`[${lesson.scheduleDate} ${lesson.startTime} ${lesson.courseName}]`,
+			'操作排课',
+			{
+				distinguishCancelAndClose: true,
+				confirmButtonText: '编辑',
+				cancelButtonText: '取消排课',
+				type: 'info',
+			}
+		);
+		// 点「编辑」
+		addForm.value = {
+			id: lesson.id,
+			scheduleDate: lesson.scheduleDate,
+			courseId: null,
+			courseName: lesson.courseName,
+			teacherName: lesson.teacherName,
+			teacherAvatar: lesson.teacherAvatar,
+			room: lesson.room,
+			startTime: lesson.startTime,
+			endTime: lesson.endTime,
+			duration: lesson.duration || 60,
+		};
+		addDialogVisible.value = true;
+	} catch (action) {
+		// 点「取消排课」（action === 'cancel'），关闭弹窗（action === 'close'）不处理
+		if (action === 'cancel') {
+			await ElMessageBox.confirm('确认取消该节课？', '提示', { type: 'warning', confirmButtonText: '确认', cancelButtonText: '返回' });
+			await service.music.schedule.update({ id: lesson.id, status: 4 });
+			ElMessage.success('已取消');
+			loadSchedules();
+		}
+	}
 }
 
 // 批量排课
@@ -404,7 +430,7 @@ async function submitBatch() {
 // 单节新增
 const addDialogVisible = ref(false);
 const addLoading = ref(false);
-const addForm = ref<any>({ scheduleDate: '', courseId: null, courseName: '', teacherName: '', teacherAvatar: '', room: '', startTime: '', endTime: '', duration: 60 });
+const addForm = ref<any>({ id: null, scheduleDate: '', courseId: null, courseName: '', teacherName: '', teacherAvatar: '', room: '', startTime: '', endTime: '', duration: 60 });
 
 function onAddCourseChange(val: number) {
 	const c = courseMap.value[val];
@@ -428,18 +454,32 @@ async function submitAdd() {
 	}
 	addLoading.value = true;
 	try {
-		await service.music.schedule.add({
-			studentId: selectedStudentId.value,
-			scheduleDate: f.scheduleDate,
-			courseName: f.courseName,
-			teacherName: f.teacherName,
-			teacherAvatar: f.teacherAvatar,
-			room: f.room,
-			startTime: f.startTime,
-			endTime: f.endTime,
-			status: 0,
-		});
-		ElMessage.success('排课成功');
+		if (f.id) {
+			await service.music.schedule.update({
+				id: f.id,
+				scheduleDate: f.scheduleDate,
+				courseName: f.courseName,
+				teacherName: f.teacherName,
+				teacherAvatar: f.teacherAvatar,
+				room: f.room,
+				startTime: f.startTime,
+				endTime: f.endTime,
+			});
+			ElMessage.success('修改成功');
+		} else {
+			await service.music.schedule.add({
+				studentId: selectedStudentId.value,
+				scheduleDate: f.scheduleDate,
+				courseName: f.courseName,
+				teacherName: f.teacherName,
+				teacherAvatar: f.teacherAvatar,
+				room: f.room,
+				startTime: f.startTime,
+				endTime: f.endTime,
+				status: 0,
+			});
+			ElMessage.success('排课成功');
+		}
 		addDialogVisible.value = false;
 		loadSchedules();
 	} finally {
