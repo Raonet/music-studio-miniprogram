@@ -31,4 +31,9 @@ export class AppMusicScheduleController extends BaseController {
       await this.musicScheduleService.recent(this.ctx.user.id, limit || 3)
     );
   }
+
+  @Get('/upcoming', { summary: '获取未来待上课排课列表（用于请假选择）' })
+  async upcoming() {
+    return this.ok(await this.musicScheduleService.upcoming(this.ctx.user.id));
+  }
 }

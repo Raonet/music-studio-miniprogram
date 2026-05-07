@@ -2,10 +2,10 @@ const { get, post } = require('../../utils/request');
 
 Page({
   data: {
-    courses: [],
-    courseIndex: -1,
-    selectedCourse: '',
-    selectedDate: '',
+    schedules: [],       // 原始排课数据
+    scheduleLabels: [],  // 展示用的拼接字符串
+    scheduleIndex: -1,
+    selectedSchedule: null,
     reason: '',
     canSubmit: false,
     submitting: false,
@@ -18,28 +18,27 @@ Page({
   },
 
   onLoad() {
-    this._loadCourses();
+    this._loadUpcoming();
   },
 
-  async _loadCourses() {
+  async _loadUpcoming() {
     try {
-      const data = await get('/app/music/course/list');
+      const data = await get('/app/music/schedule/upcoming');
       if (Array.isArray(data) && data.length > 0) {
-        const courses = data.map(c => `${c.name} - ${c.teacherName || '待定'}`);
-        this.setData({ courses });
+        this.setData({
+          schedules: data,
+          scheduleLabels: data.map(s => s.label),
+        });
       }
     } catch (e) {
-      // 加载失败时保留空列表，用户仍可手动输入
+      wx.showToast({ title: '加载课程失败', icon: 'none' });
     }
   },
 
-  onCourseChange(e) {
-    const idx = e.detail.value;
-    this.setData({ courseIndex: idx, selectedCourse: this.data.courses[idx] }, () => this.checkCanSubmit());
-  },
-
-  onDateChange(e) {
-    this.setData({ selectedDate: e.detail.value }, () => this.checkCanSubmit());
+  onScheduleChange(e) {
+    const idx = parseInt(e.detail.value);
+    const selected = this.data.schedules[idx];
+    this.setData({ scheduleIndex: idx, selectedSchedule: selected }, () => this.checkCanSubmit());
   },
 
   onReasonInput(e) {
@@ -47,27 +46,24 @@ Page({
   },
 
   checkCanSubmit() {
-    const { selectedCourse, selectedDate, reason } = this.data;
-    this.setData({ canSubmit: !!(selectedCourse && selectedDate && reason.trim()) });
+    const { selectedSchedule, reason } = this.data;
+    this.setData({ canSubmit: !!(selectedSchedule && reason.trim()) });
   },
 
   async handleSubmit() {
     if (!this.data.canSubmit || this.data.submitting) return;
 
-    // 从 selectedCourse 提取课程名（去掉 "- 老师名" 部分）
-    const courseName = this.data.selectedCourse.split(' - ')[0];
-
+    const { selectedSchedule, reason } = this.data;
     this.setData({ submitting: true });
     try {
       await post('/app/music/leave/submit', {
-        courseName,
-        leaveDate: this.data.selectedDate,
-        reason: this.data.reason,
+        scheduleId: selectedSchedule.id,
+        courseName: selectedSchedule.courseName,
+        leaveDate: selectedSchedule.leaveDate,
+        reason,
       });
       wx.showToast({ title: '申请已提交', icon: 'success' });
-      setTimeout(() => {
-        wx.navigateBack();
-      }, 1500);
+      setTimeout(() => wx.navigateBack(), 1500);
     } catch (e) {
       wx.showToast({ title: e?.message || '提交失败，请重试', icon: 'none' });
     } finally {

@@ -132,6 +132,31 @@ export class MusicScheduleService extends BaseService {
     }));
   }
 
+  /**
+   * 获取未来待上课排课列表（用于请假选择）
+   */
+  async upcoming(userId: number) {
+    const student = await this.studentService.getOrCreate(userId);
+    const today = this.today();
+
+    const schedules = await this.scheduleEntity
+      .createQueryBuilder('s')
+      .where('s.studentId = :studentId', { studentId: student.id })
+      .andWhere('s.scheduleDate >= :today', { today })
+      .andWhere('s.status = 0')
+      .orderBy('s.scheduleDate', 'ASC')
+      .addOrderBy('s.startTime', 'ASC')
+      .limit(30)
+      .getMany();
+
+    return schedules.map(s => ({
+      id: s.id,
+      label: `${s.courseName}（${s.scheduleDate} ${s.startTime}）`,
+      courseName: s.courseName,
+      leaveDate: s.scheduleDate,
+    }));
+  }
+
   private statusLabel(status: number) {
     return ['待上课', '已上课', '已请假', '待补课'][status] || '未知';
   }

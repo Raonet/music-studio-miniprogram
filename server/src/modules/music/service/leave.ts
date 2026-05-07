@@ -4,6 +4,7 @@ import { InjectEntityModel } from '@midwayjs/typeorm';
 import { Repository } from 'typeorm';
 import { MusicLeaveRequestEntity } from '../entity/leave-request';
 import { MusicStudentService } from './student';
+import { MusicScheduleEntity } from '../entity/schedule';
 
 // status 映射
 const STATUS_MAP = {
@@ -20,6 +21,9 @@ export class MusicLeaveService extends BaseService {
   @InjectEntityModel(MusicLeaveRequestEntity)
   leaveEntity: Repository<MusicLeaveRequestEntity>;
 
+  @InjectEntityModel(MusicScheduleEntity)
+  scheduleEntity: Repository<MusicScheduleEntity>;
+
   @Inject()
   studentService: MusicStudentService;
 
@@ -35,7 +39,7 @@ export class MusicLeaveService extends BaseService {
   /**
    * 提交请假申请
    */
-  async submit(userId: number, body: { courseName: string; leaveDate: string; reason?: string }) {
+  async submit(userId: number, body: { scheduleId: number; courseName: string; leaveDate: string; reason?: string }) {
     const student = await this.studentService.getOrCreate(userId);
 
     const record = await this.leaveEntity.save({
@@ -46,8 +50,44 @@ export class MusicLeaveService extends BaseService {
       status: 0,
     });
 
+    // 把对应排课状态改为已请假
+    if (body.scheduleId) {
+      await this.scheduleEntity.update({ id: body.scheduleId, studentId: student.id }, { status: 2 });
+    }
+
     return { id: record.id };
   }
+
+  /**
+   * 获取请假记录列表
+   */
+  async records(userId: number, filter: string) {
+    const student = await this.studentService.getOrCreate(userId);
+
+    const qb = this.leaveEntity
+      .createQueryBuilder('l')
+      .where('l.studentId = :studentId', { studentId: student.id })
+      .orderBy('l.leaveDate', 'DESC')
+      .addOrderBy('l.createTime', 'DESC');
+
+    if (filter && STATUS_MAP[filter] !== undefined) {
+      qb.andWhere('l.status = :status', { status: STATUS_MAP[filter] });
+    }
+
+    const leaves = await qb.getMany();
+
+    return leaves.map(l => ({
+      id: l.id,
+      courseName: l.courseName,
+      leaveDate: l.leaveDate,
+      reason: l.reason,
+      status: STATUS_LABEL[l.status],
+      statusKey: STATUS_KEY[l.status],
+      remark: l.remark,
+    }));
+  }
+}
+
 
   /**
    * 获取请假记录列表
