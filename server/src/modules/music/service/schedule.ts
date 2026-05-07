@@ -128,11 +128,16 @@ export class MusicScheduleService extends BaseService {
       teacher: s.teacherName,
       duration: `${this.calcDuration(s.startTime, s.endTime)}分钟`,
       status: this.statusLabel(s.status),
+      statusKey: this.statusKey(s.status),
     }));
   }
 
   private statusLabel(status: number) {
     return ['待上课', '已上课', '已请假', '待补课'][status] || '未知';
+  }
+
+  private statusKey(status: number) {
+    return ['pending', 'completed', 'leave', 'makeup'][status] || '';
   }
 
   private calcDuration(start: string, end: string): number {
