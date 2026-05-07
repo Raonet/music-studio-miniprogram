@@ -87,10 +87,10 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item label="课程名称">
-					<el-input v-model="batchForm.courseName" />
+					<el-input :value="batchForm.courseName" disabled />
 				</el-form-item>
 				<el-form-item label="教师">
-					<el-input v-model="batchForm.teacherName" />
+					<el-input :value="batchForm.teacherName" disabled />
 				</el-form-item>
 				<el-form-item label="教室">
 					<el-input v-model="batchForm.room" placeholder="如：A101" />
@@ -153,10 +153,10 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item label="课程名称">
-					<el-input v-model="addForm.courseName" />
+					<el-input :value="addForm.courseName" disabled />
 				</el-form-item>
 				<el-form-item label="教师">
-					<el-input v-model="addForm.teacherName" />
+					<el-input :value="addForm.teacherName" disabled />
 				</el-form-item>
 				<el-form-item label="教室">
 					<el-input v-model="addForm.room" placeholder="如：A101" />
