@@ -218,7 +218,7 @@ const { service } = useCool();
 // 状态
 const selectedStatus = ref<number | null>(null);
 const selectedTeacherName = ref<string>('');
-const teacherList = ref<any[]>();
+const teacherList = ref<any[]>([]);
 const currentYear = ref(new Date().getFullYear());
 const currentMonth = ref(new Date().getMonth() + 1);
 const schedules = ref<any[]>([]);

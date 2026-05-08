@@ -82,20 +82,19 @@ export class AdminMusicTeacherStudentController extends BaseController {
   @Get('/myStudents', { summary: '当前教师的学员列表' })
   async myStudents() {
     const isTeacher = await this.musicTeacherService.isTeacher();
-    if (!isTeacher) {
-      // 非教师角色返回全量学员
-      return this.list(undefined as any);
-    }
-    const studentIds = await this.musicTeacherService.getMyStudentIds();
-    if (!studentIds.length) return this.ok([]);
 
-    const students = await this.studentEntity
+    const qb = this.studentEntity
       .createQueryBuilder('s')
       .leftJoin(UserInfoEntity, 'u', 'u.id = s.userId')
-      .select(['s.id AS id', 's.studentNo AS studentNo', 's.specialty AS specialty', 'u.nickName AS nickName', 'u.phone AS phone'])
-      .where('s.id IN (:...ids)', { ids: studentIds })
-      .getRawMany();
+      .select(['s.id AS id', 's.studentNo AS studentNo', 's.specialty AS specialty', 'u.nickName AS nickName', 'u.phone AS phone']);
 
+    if (isTeacher) {
+      const studentIds = await this.musicTeacherService.getMyStudentIds();
+      if (!studentIds.length) return this.ok([]);
+      qb.where('s.id IN (:...ids)', { ids: studentIds });
+    }
+
+    const students = await qb.getRawMany();
     return this.ok(students.map(s => ({
       id: Number(s.id),
       label: `${s.nickName || s.phone || s.studentNo}${s.specialty ? '（' + s.specialty + '）' : ''}`,

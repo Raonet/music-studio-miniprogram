@@ -35,14 +35,35 @@ export class MusicStudentService extends BaseService {
     await this._ensureColumns();
   }
 
-  /** 检查并补全 music_student 表缺失的列 */
+  /** 检查并补全各表缺失的列 */
   private async _ensureColumns() {
-    const columns = await this.dataSource.query(
+    // music_student.contactPhone
+    const contactPhoneCols = await this.dataSource.query(
       `SHOW COLUMNS FROM music_student LIKE 'contactPhone'`
     );
-    if (columns.length === 0) {
+    if (contactPhoneCols.length === 0) {
       await this.dataSource.query(
         `ALTER TABLE music_student ADD COLUMN contactPhone VARCHAR(255) NULL COMMENT '联系手机号（展示用，不影响登录）'`
+      );
+    }
+
+    // music_package.courseId
+    const courseIdCols = await this.dataSource.query(
+      `SHOW COLUMNS FROM music_package LIKE 'courseId'`
+    );
+    if (courseIdCols.length === 0) {
+      await this.dataSource.query(
+        `ALTER TABLE music_package ADD COLUMN courseId INT NULL COMMENT '关联课程ID'`
+      );
+    }
+
+    // music_course.price
+    const priceCols = await this.dataSource.query(
+      `SHOW COLUMNS FROM music_course LIKE 'price'`
+    );
+    if (priceCols.length === 0) {
+      await this.dataSource.query(
+        `ALTER TABLE music_course ADD COLUMN price DECIMAL(10,2) NOT NULL DEFAULT 0 COMMENT '课时费（元）'`
       );
     }
   }

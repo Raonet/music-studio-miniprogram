@@ -86,7 +86,7 @@ export class AdminMusicCourseController extends BaseController {
       .select(['u.id AS id', 'u.name AS name', 'u.phone AS phone'])
       .getRawMany();
 
-    return this.ok(users.map(u => ({ id: Number(u.id), label: u.name || u.phone, name: u.name })));
+    return this.ok(users.filter(u => u.name).map(u => ({ id: Number(u.id), label: u.name || u.phone, name: u.name })));
   }
 }
 
