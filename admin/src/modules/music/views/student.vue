@@ -9,7 +9,19 @@
 		</cl-row>
 
 		<cl-row>
-			<cl-table ref="Table" />
+			<cl-table ref="Table">
+				<template #slot-user="{ scope }">
+					<div class="user-cell">
+						<el-avatar :size="32" :src="scope.row.avatarUrl">
+							{{ (scope.row.nickName || '?').charAt(0) }}
+						</el-avatar>
+						<div class="user-info">
+							<div class="user-name">{{ scope.row.nickName || '未设置昵称' }}</div>
+							<div class="user-phone">{{ scope.row.phone || '' }}</div>
+						</div>
+					</div>
+				</template>
+			</cl-table>
 		</cl-row>
 
 		<cl-row>
@@ -17,7 +29,32 @@
 			<cl-pagination />
 		</cl-row>
 
-		<cl-upsert ref="Upsert" />
+		<cl-upsert ref="Upsert">
+			<template #slot-userId>
+				<el-select
+					v-model="upsertUserId"
+					placeholder="搜索昵称或手机号"
+					filterable
+					style="width:100%"
+					@change="onUserSelect"
+				>
+					<el-option
+						v-for="u in userList"
+						:key="u.id"
+						:label="u.label"
+						:value="u.id"
+					>
+						<div class="user-option">
+							<el-avatar :size="28" :src="u.avatarUrl">{{ u.nickName.charAt(0) }}</el-avatar>
+							<div class="user-option-info">
+								<span class="user-option-name">{{ u.nickName }}</span>
+								<span class="user-option-phone">{{ u.phone }}</span>
+							</div>
+						</div>
+					</el-option>
+				</el-select>
+			</template>
+		</cl-upsert>
 	</cl-crud>
 </template>
 
@@ -26,23 +63,37 @@ defineOptions({ name: 'music-student' });
 
 import { useCrud, useSearch, useTable, useUpsert } from '@cool-vue/crud';
 import { useCool } from '/@/cool';
-import { computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 
 const { service, browser } = useCool();
-const dialogWidth = computed(() => (browser.isMobile ? '95%' : '500px'));
+const dialogWidth = computed(() => (browser.isMobile ? '95%' : '520px'));
+
+const userList = ref<any[]>([]);
+const upsertUserId = ref<number | null>(null);
+
+async function loadUserList() {
+	const res = await service.music.student.request({ url: '/userList', method: 'GET' });
+	userList.value = res || [];
+}
+
+loadUserList();
+
+function onUserSelect(val: number) {
+	Upsert.value?.setForm('userId', val);
+}
+
+// 编辑时同步回显 userId 到自定义选择器
+watch(() => Upsert.value?.form?.userId, (val) => {
+	upsertUserId.value = val ?? null;
+});
 
 const Table = useTable({
 	columns: [
 		{ type: 'selection', width: 60 },
-		{ label: '学员编号', prop: 'studentNo', minWidth: 120 },
+		{ label: '关联用户', type: 'slot', prop: 'slot-user', minWidth: 180 },
+		{ label: '学员编号', prop: 'studentNo', minWidth: 110 },
 		{ label: '专长方向', prop: 'specialty', minWidth: 120 },
-		{ label: '关联用户ID', prop: 'userId', minWidth: 100 },
-		{
-			label: '创建时间',
-			prop: 'createTime',
-			sortable: 'desc',
-			minWidth: 160
-		},
+		{ label: '创建时间', prop: 'createTime', sortable: 'desc', minWidth: 160 },
 		{ type: 'op', buttons: ['edit', 'delete'] }
 	]
 });
@@ -50,6 +101,12 @@ const Table = useTable({
 const Upsert = useUpsert({
 	dialog: { width: dialogWidth },
 	items: [
+		{
+			prop: 'userId',
+			label: '关联用户',
+			required: true,
+			component: { name: 'slot-userId' }
+		},
 		{
 			prop: 'studentNo',
 			label: '学员编号',
@@ -60,15 +117,6 @@ const Upsert = useUpsert({
 			prop: 'specialty',
 			label: '专长方向',
 			component: { name: 'el-input', props: { placeholder: '如：钢琴、吉他' } }
-		},
-		{
-			prop: 'userId',
-			label: '关联用户ID',
-			required: true,
-			component: {
-				name: 'el-input-number',
-				props: { min: 1, placeholder: '小程序注册用户ID', style: 'width:100%' }
-			}
 		}
 	]
 });
@@ -86,3 +134,49 @@ const Crud = useCrud({ service: service.music.student }, app => {
 	app.refresh();
 });
 </script>
+
+<style scoped>
+.user-cell {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.user-info {
+	display: flex;
+	flex-direction: column;
+}
+
+.user-name {
+	font-size: 13px;
+	font-weight: 500;
+	color: #303133;
+}
+
+.user-phone {
+	font-size: 12px;
+	color: #909399;
+}
+
+.user-option {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 2px 0;
+}
+
+.user-option-info {
+	display: flex;
+	flex-direction: column;
+}
+
+.user-option-name {
+	font-size: 13px;
+	color: #303133;
+}
+
+.user-option-phone {
+	font-size: 11px;
+	color: #909399;
+}
+</style>
