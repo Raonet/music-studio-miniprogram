@@ -35,7 +35,7 @@ export default (): ModuleConfig => {
 			},
 			{
 				path: '/music/package',
-				meta: { label: '套餐管理' },
+				meta: { label: '课时管理' },
 				component: () => import('./views/package.vue')
 			},
 			{
