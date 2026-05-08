@@ -2,6 +2,8 @@
 	<cl-crud ref="Crud">
 		<cl-row>
 			<cl-refresh-btn />
+			<cl-add-btn />
+			<cl-multi-delete-btn />
 			<cl-flex1 />
 			<cl-search ref="Search" />
 		</cl-row>
@@ -24,16 +26,22 @@ defineOptions({ name: 'music-package' });
 
 import { useCrud, useSearch, useTable, useUpsert } from '@cool-vue/crud';
 import { useCool } from '/@/cool';
-import { ref, onMounted, computed } from 'vue';
+import { reactive, ref, onMounted, computed } from 'vue';
 
 const { service, browser } = useCool();
-const dialogWidth = computed(() => (browser.isMobile ? '95%' : '400px'));
+const dialogWidth = computed(() => (browser.isMobile ? '95%' : '500px'));
+
+const options = reactive({
+	status: [
+		{ label: '未开始', value: 0, type: 'info' },
+		{ label: '进行中', value: 1, type: 'success' },
+		{ label: '已结束', value: 2, type: 'warning' }
+	]
+});
 
 const studentList = ref<any[]>([]);
 
 onMounted(async () => {
-	// 先确保所有学员都有课时记录
-	await service.music.package.request({ url: '/ensureAll', method: 'GET' });
 	const res = await service.music.student.studentUsers();
 	studentList.value = (res || []).map((s: any) => ({ label: s.label, value: s.id }));
 });
@@ -44,16 +52,20 @@ const Table = useTable({
 		{
 			label: '学员',
 			prop: 'studentId',
-			minWidth: 150,
+			minWidth: 130,
 			formatter: (row: any) => {
 				const s = studentList.value.find(s => s.value === row.studentId);
 				return s?.label || row.studentId;
 			}
 		},
-		{ label: '剩余课时', prop: 'totalLessons', minWidth: 100 },
-		{ label: '已用课时', prop: 'usedLessons', minWidth: 100 },
-		{ label: '更新时间', prop: 'updateTime', sortable: 'desc', minWidth: 160 },
-		{ type: 'op', buttons: ['edit'] }
+		{ label: '电话', prop: 'phone', minWidth: 120 },
+		{ label: '套餐名称', prop: 'name', minWidth: 130 },
+		{ label: '总课时', prop: 'totalLessons', minWidth: 80 },
+		{ label: '已用课时', prop: 'usedLessons', minWidth: 80 },
+		{ label: '有效期至', prop: 'expireDate', minWidth: 110 },
+		{ label: '状态', prop: 'status', dict: options.status, minWidth: 90 },
+		{ label: '创建时间', prop: 'createTime', sortable: 'desc', minWidth: 160 },
+		{ type: 'op', buttons: ['edit', 'delete'] }
 	]
 });
 
@@ -61,15 +73,40 @@ const Upsert = useUpsert({
 	dialog: { width: dialogWidth },
 	items: [
 		{
-			prop: 'totalLessons',
-			label: '剩余课时',
+			prop: 'studentId',
+			label: '学员',
 			required: true,
-			component: { name: 'el-input-number', props: { min: 0, style: 'width:100%' } }
+			component: {
+				name: 'el-select',
+				props: { placeholder: '请选择学员', filterable: true, style: 'width:100%' },
+				options: studentList
+			}
 		},
 		{
-			prop: 'usedLessons',
-			label: '已用课时',
-			component: { name: 'el-input-number', props: { min: 0, disabled: true, style: 'width:100%' } }
+			prop: 'name',
+			label: '套餐名称',
+			required: true,
+			component: { name: 'el-input', props: { placeholder: '如：年度套餐100课时' } }
+		},
+		{
+			prop: 'totalLessons',
+			label: '总课时',
+			required: true,
+			component: { name: 'el-input-number', props: { min: 1, style: 'width:100%' } }
+		},
+		{
+			prop: 'expireDate',
+			label: '有效期至',
+			component: {
+				name: 'el-date-picker',
+				props: { type: 'date', valueFormat: 'YYYY-MM-DD', style: 'width:100%' }
+			}
+		},
+		{
+			prop: 'status',
+			label: '状态',
+			value: 1,
+			component: { name: 'el-radio-group', options: options.status }
 		}
 	]
 });
@@ -77,12 +114,8 @@ const Upsert = useUpsert({
 const Search = useSearch({
 	items: [
 		{
-			prop: 'studentId',
-			component: {
-				name: 'el-select',
-				props: { placeholder: '按学员筛选', filterable: true, clearable: true, style: 'width:200px' },
-				options: studentList
-			}
+			prop: 'keyWord',
+			component: { name: 'el-input', props: { placeholder: '搜索套餐名称', clearable: true } }
 		}
 	]
 });

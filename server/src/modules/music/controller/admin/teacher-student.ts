@@ -43,7 +43,7 @@ export class AdminMusicTeacherStudentController extends BaseController {
       .getRawMany();
 
     return this.ok(students.map(s => ({
-      id: s.id,
+      id: Number(s.id),
       label: `${s.nickName || s.phone || s.studentNo}${s.specialty ? '（' + s.specialty + '）' : ''}`,
       specialty: s.specialty,
     })));
@@ -97,7 +97,7 @@ export class AdminMusicTeacherStudentController extends BaseController {
       .getRawMany();
 
     return this.ok(students.map(s => ({
-      id: s.id,
+      id: Number(s.id),
       label: `${s.nickName || s.phone || s.studentNo}${s.specialty ? '（' + s.specialty + '）' : ''}`,
       specialty: s.specialty,
     })));

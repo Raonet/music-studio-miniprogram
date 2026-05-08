@@ -47,7 +47,13 @@ export class AdminMusicStudentController extends BaseController {
     const total = await qb.getCount();
     const list = await qb.orderBy('s.createTime', 'DESC').skip(skip).take(size).getRawMany();
 
-    return this.ok({ list, pagination: { total, page: Number(page), size: Number(size) } });
+    const rows = list.map(r => ({
+      ...r,
+      id: Number(r.id),
+      userId: Number(r.userId),
+    }));
+
+    return this.ok({ list: rows, pagination: { total, page: Number(page), size: Number(size) } });
   }
 
   /** 学员选择器数据：返回 { id(student.id), label(姓名/手机), specialty } */
@@ -67,7 +73,7 @@ export class AdminMusicStudentController extends BaseController {
 
     return this.ok(
       students.map(s => ({
-        id: s.id,
+        id: Number(s.id),
         label: `${s.nickName || s.phone || s.studentNo}${s.specialty ? '（' + s.specialty + '）' : ''}`,
         specialty: s.specialty,
       }))
