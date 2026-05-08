@@ -21,6 +21,7 @@ export class AdminMusicStudentController extends BaseController {
 
   /** 分页查询，带用户信息 */
   @Post('/page', { summary: '学员分页列表' })
+  // @ts-ignore override with body param
   async page(@Body() body: any) {
     const { page = 1, size = 20, keyWord = '' } = body;
     const skip = (page - 1) * size;

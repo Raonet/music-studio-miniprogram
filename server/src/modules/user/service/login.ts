@@ -1,4 +1,4 @@
-import { Config, Inject, Provide } from '@midwayjs/core';
+import { Config, Inject, InjectClient, Provide } from '@midwayjs/core';
 import { BaseService, CoolCommException } from '@cool-midway/core';
 import { InjectEntityModel } from '@midwayjs/typeorm';
 import { Equal, Repository } from 'typeorm';

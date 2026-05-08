@@ -69,9 +69,9 @@ export class MusicStudentService extends BaseService {
     // 获取用户基本信息
     const userInfo = await this.userInfoEntity.findOneBy({ id: Equal(userId) });
 
-    // 获取进行中的套餐
+    // 获取课时记录
     const pkg = await this.packageEntity.findOne({
-      where: { studentId: student.id, status: 1 },
+      where: { studentId: student.id },
       order: { createTime: 'DESC' },
     });
 
@@ -92,11 +92,8 @@ export class MusicStudentService extends BaseService {
       avatarUrl: userInfo?.avatarUrl || '',
       package: pkg
         ? {
-            name: pkg.name,
             totalLessons: pkg.totalLessons,
             usedLessons: pkg.usedLessons,
-            expireDate: pkg.expireDate,
-            status: pkg.status,
           }
         : null,
     };

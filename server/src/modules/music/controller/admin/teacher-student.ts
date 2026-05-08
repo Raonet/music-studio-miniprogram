@@ -26,6 +26,7 @@ export class AdminMusicTeacherStudentController extends BaseController {
 
   /** 查询某教师已关联的学员列表 */
   @Get('/list', { summary: '查询教师关联学员' })
+  // @ts-ignore override with query param
   async list(@Query('teacherUserId') teacherUserId: number) {
     if (!teacherUserId) return this.ok([]);
     const relations = await this.teacherStudentEntity.findBy({

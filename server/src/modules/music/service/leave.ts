@@ -87,34 +87,3 @@ export class MusicLeaveService extends BaseService {
     }));
   }
 }
-
-
-  /**
-   * 获取请假记录列表
-   */
-  async records(userId: number, filter: string) {
-    const student = await this.studentService.getOrCreate(userId);
-
-    const qb = this.leaveEntity
-      .createQueryBuilder('l')
-      .where('l.studentId = :studentId', { studentId: student.id })
-      .orderBy('l.leaveDate', 'DESC')
-      .addOrderBy('l.createTime', 'DESC');
-
-    if (filter && STATUS_MAP[filter] !== undefined) {
-      qb.andWhere('l.status = :status', { status: STATUS_MAP[filter] });
-    }
-
-    const leaves = await qb.getMany();
-
-    return leaves.map(l => ({
-      id: l.id,
-      courseName: l.courseName,
-      leaveDate: l.leaveDate,
-      reason: l.reason,
-      status: STATUS_LABEL[l.status],
-      statusKey: STATUS_KEY[l.status],
-      remark: l.remark,
-    }));
-  }
-}

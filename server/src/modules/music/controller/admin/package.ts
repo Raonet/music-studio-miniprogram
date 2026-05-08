@@ -38,6 +38,7 @@ export class AdminMusicPackageController extends BaseController {
 
   /** 只允许修改剩余课时 */
   @Put('/update', { summary: '修改课时' })
+  // @ts-ignore override with body params
   async update(@Body('id') id: number, @Body('totalLessons') totalLessons: number) {
     if (id === undefined || totalLessons === undefined) {
       return this.fail('参数错误');
