@@ -18,6 +18,9 @@ export class MusicCourseEntity extends BaseEntity {
   @Column({ comment: '课程时长(分钟)', default: 60 })
   duration: number;
 
+  @Column({ comment: '课时费（元）', type: 'decimal', precision: 10, scale: 2, default: 0 })
+  price: number;
+
   @Column({ comment: '状态 0禁用 1启用', default: 1 })
   status: number;
 }

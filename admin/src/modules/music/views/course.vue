@@ -62,6 +62,7 @@ const Table = useTable({
 		{ label: '课程名称', prop: 'name', minWidth: 130 },
 		{ label: '教师', prop: 'teacherName', minWidth: 100 },
 		{ label: '时长(分钟)', prop: 'duration', minWidth: 90 },
+		{ label: '课时费(元)', prop: 'price', minWidth: 90 },
 		{ label: '状态', prop: 'status', dict: options.status, minWidth: 80 },
 		{ label: '创建时间', prop: 'createTime', sortable: 'desc', minWidth: 160 },
 		{ type: 'op', buttons: ['edit', 'delete'] }
@@ -108,6 +109,12 @@ const Upsert = useUpsert({
 			label: '时长(分钟)',
 			value: 60,
 			component: { name: 'el-input-number', props: { min: 1, style: 'width:100%' } }
+		},
+		{
+			prop: 'price',
+			label: '课时费(元)',
+			value: 0,
+			component: { name: 'el-input-number', props: { min: 0, precision: 2, step: 10, style: 'width:100%' } }
 		},
 		{
 			prop: 'status',

@@ -10,6 +10,9 @@ export class MusicPackageEntity extends BaseEntity {
   @Column({ comment: '学员ID' })
   studentId: number;
 
+  @Column({ comment: '关联课程ID', nullable: true })
+  courseId: number;
+
   @Column({ comment: '套餐名称' })
   name: string;
 

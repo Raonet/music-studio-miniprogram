@@ -40,10 +40,18 @@ const options = reactive({
 });
 
 const studentList = ref<any[]>([]);
+const courseList = ref<any[]>([]);
 
 onMounted(async () => {
-	const res = await service.music.student.studentUsers();
-	studentList.value = (res || []).map((s: any) => ({ label: s.label, value: s.id }));
+	const [students, courses] = await Promise.all([
+		service.music.student.studentUsers(),
+		service.music.course.list(),
+	]);
+	studentList.value = (students || []).map((s: any) => ({ label: s.label, value: s.id }));
+	courseList.value = (courses || []).map((c: any) => ({
+		label: `${c.name}（${c.teacherName || '无教师'}）`,
+		value: c.id,
+	}));
 });
 
 const Table = useTable({
@@ -59,6 +67,7 @@ const Table = useTable({
 			}
 		},
 		{ label: '电话', prop: 'phone', minWidth: 120 },
+		{ label: '课程', prop: 'courseName', minWidth: 120 },
 		{ label: '套餐名称', prop: 'name', minWidth: 130 },
 		{ label: '总课时', prop: 'totalLessons', minWidth: 80 },
 		{ label: '已用课时', prop: 'usedLessons', minWidth: 80 },
@@ -80,6 +89,16 @@ const Upsert = useUpsert({
 				name: 'el-select',
 				props: { placeholder: '请选择学员', filterable: true, style: 'width:100%' },
 				options: studentList
+			}
+		},
+		{
+			prop: 'courseId',
+			label: '课程',
+			required: true,
+			component: {
+				name: 'el-select',
+				props: { placeholder: '请选择课程', filterable: true, style: 'width:100%' },
+				options: courseList
 			}
 		},
 		{
