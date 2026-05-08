@@ -46,7 +46,8 @@ const options = reactive({
 		{ label: '待上课', value: 0, type: 'primary' },
 		{ label: '已上课', value: 1, type: 'success' },
 		{ label: '已请假', value: 2, type: 'warning' },
-		{ label: '待补课', value: 3, type: 'info' }
+		{ label: '待补课', value: 3, type: 'info' },
+		{ label: '已取消', value: 4, type: 'danger' }
 	]
 });
 
