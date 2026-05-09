@@ -113,9 +113,10 @@
 					</el-checkbox-group>
 				</el-form-item>
 				<el-form-item label="开始时间">
-					<el-time-select
+					<el-time-picker
 						v-model="batchForm.startTime"
-						start="08:00" step="00:30" end="22:00"
+						value-format="HH:mm"
+						format="HH:mm"
 						placeholder="开始时间"
 						style="width:100%"
 						@change="calcBatchEndTime"
@@ -185,9 +186,10 @@
 					<el-input v-model="addForm.room" placeholder="如：A101" />
 				</el-form-item>
 				<el-form-item label="开始时间">
-					<el-time-select
+					<el-time-picker
 						v-model="addForm.startTime"
-						start="08:00" step="00:30" end="22:00"
+						value-format="HH:mm"
+						format="HH:mm"
 						placeholder="开始时间"
 						style="width:100%"
 						@change="calcAddEndTime"
