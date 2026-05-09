@@ -23,8 +23,7 @@
             <text class="count-num">{{isLoggedIn ? remainingLessons : '--'}}</text>
             <text class="count-unit">节</text>
           </view>
-          <text class="expire-text" wx:if="{{isLoggedIn && expireDate}}">有效期至 {{expireDate}}</text>
-          <text class="expire-text" wx:else>登录后查看详情</text>
+          <text class="expire-text" wx:if="{{!isLoggedIn}}">登录后查看详情</text>
         </view>
         <view class="progress-ring-wrap">
           <canvas type="2d" id="progressCanvas" class="progress-canvas"></canvas>

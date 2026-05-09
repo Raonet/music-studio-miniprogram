@@ -24,7 +24,7 @@
       <view class="login-icon-wrap">
         <image class="login-icon" src="/assets/icons/music-note-gold.svg" mode="aspectFit" />
       </view>
-      <text class="login-title">欢迎使用 Music Studio</text>
+      <text class="login-title">欢迎使用 Cosmos Piano</text>
       <text class="login-desc">登录后查看个人信息、课时记录和课程安排</text>
 
       <view class="login-form">
@@ -62,7 +62,7 @@
     </view>
 
     <view class="version-text">
-      <text>Music Studio v1.0.0</text>
+      <text>CosmosPiano v1.0.0</text>
     </view>
   </block>
 
@@ -122,7 +122,7 @@
             </view>
           </view>
           <view class="package-meta">
-            <text class="package-meta-text">{{package.totalLessons}}节 · 有效期至 {{package.expireDate}}</text>
+            <text class="package-meta-text">{{package.totalLessons}}节</text>
           </view>
           <view class="package-progress-bar">
             <view class="package-progress-fill" style="width: {{packageProgress}}%;"></view>
@@ -160,7 +160,7 @@
     </view>
 
     <view class="version-text">
-      <text>Music Studio v1.0.0</text>
+      <text>CosmosPiano v1.0.0</text>
     </view>
   </block>
 

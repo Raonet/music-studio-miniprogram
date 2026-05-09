@@ -31,7 +31,7 @@ Page({
       { icon: '/assets/icons/user-gold.svg', label: '个人资料', action: 'info' },
       { icon: '/assets/icons/phone-gold.svg', label: '联系教务', action: 'contact' },
       { icon: '/assets/icons/file-text-gold.svg', label: '请假记录', action: 'leave' },
-      { icon: '/assets/icons/info-gold.svg', label: '关于我们', action: 'about' }
+      // { icon: '/assets/icons/info-gold.svg', label: '关于我们', action: 'about' }
     ]
   },
 
