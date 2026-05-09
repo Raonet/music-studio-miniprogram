@@ -174,6 +174,15 @@ export class UserLoginService extends BaseService {
   }
 
   /**
+   * 公开方法：根据小程序 userId 同步创建系统用户（如果尚未创建）
+   */
+  async syncSysUserByAppUserId(appUserId: number) {
+    const appUser = await this.userInfoEntity.findOneBy({ id: Equal(appUserId) });
+    if (!appUser || !appUser.phone) return;
+    await this._createSysUser(appUser.phone, appUser.nickName || appUser.phone, appUserId);
+  }
+
+  /**
    * 同步创建 admin 系统用户，关联「学员」角色和「学员」部门
    */
   private async _createSysUser(phone: string, nickName: string, appUserId: number) {
@@ -228,13 +237,18 @@ export class UserLoginService extends BaseService {
       phone: Equal(phone),
     });
     if (!user) {
+      const nickName = phone.replace(/^(\d{3})\d{4}(\d{4})$/, '$1****$2');
       user = {
         phone,
         unionid: phone,
         loginType: 2,
-        nickName: phone.replace(/^(\d{3})\d{4}(\d{4})$/, '$1****$2'),
+        nickName,
       };
-      await this.userInfoEntity.insert(user);
+      const result = await this.userInfoEntity.insert(user);
+      const userId = result.identifiers[0].id;
+      // 新用户登录时同步创建系统用户并关联学员角色
+      await this._createSysUser(phone, nickName, userId).catch(() => null);
+      user = await this.userInfoEntity.findOneBy({ id: userId });
     }
     return this.token({ id: user.id });
   }

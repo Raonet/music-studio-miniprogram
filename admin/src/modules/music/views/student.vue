@@ -10,7 +10,7 @@
 
 		<cl-row>
 			<cl-table ref="Table">
-				<template #slot-user="{ scope }">
+				<template #column-slot-user="{ scope }">
 					<div class="user-cell">
 						<el-avatar :size="32" :src="scope.row.avatarUrl">
 							{{ (scope.row.nickName || '?').charAt(0) }}
@@ -63,7 +63,7 @@ defineOptions({ name: 'music-student' });
 
 import { useCrud, useSearch, useTable, useUpsert } from '@cool-vue/crud';
 import { useCool } from '/@/cool';
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 
 const { service, browser } = useCool();
 const dialogWidth = computed(() => (browser.isMobile ? '95%' : '520px'));
@@ -71,12 +71,18 @@ const dialogWidth = computed(() => (browser.isMobile ? '95%' : '520px'));
 const userList = ref<any[]>([]);
 const upsertUserId = ref<number | null>(null);
 
-async function loadUserList() {
-	const res = await service.music.student.request({ url: '/userList', method: 'GET' });
+async function loadUserList(studentId?: number) {
+	const res = await service.music.student.request({
+		url: '/userList',
+		method: 'POST',
+		data: studentId ? { studentId } : {}
+	});
 	userList.value = res || [];
 }
 
-loadUserList();
+onMounted(() => {
+	loadUserList();
+});
 
 function onUserSelect(val: number) {
 	Upsert.value?.setForm('userId', val);
@@ -84,7 +90,7 @@ function onUserSelect(val: number) {
 
 // 编辑时同步回显 userId 到自定义选择器
 watch(() => Upsert.value?.form?.userId, (val) => {
-	upsertUserId.value = val ?? null;
+	upsertUserId.value = val != null ? Number(val) : null;
 });
 
 const Table = useTable({
@@ -100,6 +106,11 @@ const Table = useTable({
 
 const Upsert = useUpsert({
 	dialog: { width: dialogWidth },
+	onOpened(data: any) {
+		const sid = data?.id ? Number(data.id) : undefined;
+		loadUserList(sid);
+		upsertUserId.value = data?.userId != null ? Number(data.userId) : null;
+	},
 	items: [
 		{
 			prop: 'userId',

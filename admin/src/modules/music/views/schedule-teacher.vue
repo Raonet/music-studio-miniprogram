@@ -186,26 +186,28 @@ function statusLabel(status: number) {
 }
 
 onMounted(async () => {
-	// 获取当前用户角色信息
-	const myInfo = await service.music.teacherStudent.request({ url: '/myInfo', method: 'GET' });
-	isTeacher.value = myInfo?.isTeacher || false;
+	try {
+		const myInfo = await service.music.teacherStudent.request({ url: '/myInfo', method: 'GET' }).catch(() => null);
+		isTeacher.value = myInfo?.isTeacher || false;
 
-	const [teachers, students] = await Promise.all([
-		service.music.course.teacherUsers(),
-		service.music.student.studentUsers(),
-	]);
-	teacherList.value = (teachers || []).map((t: any) => ({ label: t.label, value: t.name }));
-	const map: Record<number, string> = {};
-	(students || []).forEach((s: any) => { map[s.id] = s.label; });
-	studentMap.value = map;
+		const [teachers, students] = await Promise.all([
+			service.music.course.teacherUsers().catch(() => []),
+			service.music.student.studentUsers().catch(() => []),
+		]);
+		teacherList.value = (teachers || []).map((t: any) => ({ label: t.label, value: t.name }));
+		const map: Record<number, string> = {};
+		(students || []).forEach((s: any) => { map[s.id] = s.label; });
+		studentMap.value = map;
 
-	if (isTeacher.value) {
-		// 教师角色直接用自己的姓名
-		selectedTeacher.value = myInfo.teacherName;
-		loadSchedules();
-	} else if (teacherList.value.length > 0) {
-		selectedTeacher.value = teacherList.value[0].value;
-		loadSchedules();
+		if (isTeacher.value) {
+			selectedTeacher.value = myInfo?.teacherName || '';
+			loadSchedules();
+		} else if (teacherList.value.length > 0) {
+			selectedTeacher.value = teacherList.value[0].value;
+			loadSchedules();
+		}
+	} catch (e) {
+		console.error('[schedule-teacher] onMounted error:', e);
 	}
 });
 </script>

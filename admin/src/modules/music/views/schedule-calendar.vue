@@ -512,31 +512,45 @@ async function submitAdd() {
 }
 
 onMounted(async () => {
-	// 获取当前用户角色信息
-	const myInfo = await service.music.teacherStudent.request({ url: '/myInfo', method: 'GET' });
-	isTeacher.value = myInfo?.isTeacher || false;
+	try {
+		// 获取当前用户角色信息
+		const myInfo = await service.music.teacherStudent.request({ url: '/myInfo', method: 'GET' }).catch(() => null);
+		isTeacher.value = myInfo?.isTeacher || false;
 
-	const [students, courses, teachers] = await Promise.all([
-		// 教师角色只加载自己的学员
-		isTeacher.value
-			? service.music.teacherStudent.request({ url: '/myStudents', method: 'GET' })
-			: service.music.student.studentUsers(),
-		service.music.course.list(),
-		service.music.course.teacherUsers(),
-	]);
-	studentList.value = (students || []).map((s: any) => ({ label: s.label, value: s.id }));
-	teacherList.value = (teachers || []).map((t: any) => ({ label: t.label, value: t.name }));
-	courseList.value = (courses || []).map((c: any) => ({
-		label: `${c.name}（${c.teacherName || '无教师'}）`,
-		value: c.id,
-		raw: c
-	}));
-	const map: Record<number, any> = {};
-	(courses || []).forEach((c: any) => { map[c.id] = c; });
-	courseMap.value = map;
+		// 分开请求，避免一个失败导致全部中断
+		const [students, coursesRes, teachers] = await Promise.all([
+			// 教师角色只加载自己的学员
+			(isTeacher.value
+				? service.music.teacherStudent.request({ url: '/myStudents', method: 'GET' })
+				: service.music.student.studentUsers()
+			).catch(() => []),
+			service.music.course.request({ url: '/list', method: 'POST', data: { size: 1000 } }).catch(() => null),
+			service.music.course.teacherUsers().catch(() => []),
+		]);
 
-	if (isTeacher.value) {
-		selectedTeacherName.value = myInfo.teacherName || '';
+		console.log('[schedule-calendar] teachers:', teachers);
+		console.log('[schedule-calendar] coursesRes:', coursesRes);
+
+		studentList.value = (students || []).map((s: any) => ({ label: s.label, value: s.id }));
+		teacherList.value = (teachers || []).map((t: any) => ({ label: t.label, value: t.name }));
+
+		const courseArr = Array.isArray(coursesRes) ? coursesRes : (coursesRes?.list || []);
+		courseList.value = courseArr.map((c: any) => ({
+			label: `${c.name}（${c.teacherName || '无教师'}）`,
+			value: c.id,
+			raw: c
+		}));
+		const map: Record<number, any> = {};
+		courseArr.forEach((c: any) => { map[c.id] = c; });
+		courseMap.value = map;
+
+		if (isTeacher.value) {
+			selectedTeacherName.value = myInfo?.teacherName || '';
+		} else if (teacherList.value.length > 0) {
+			selectedTeacherName.value = teacherList.value[0].value;
+		}
+	} catch (e) {
+		console.error('[schedule-calendar] onMounted error:', e);
 	}
 
 	loadSchedules();

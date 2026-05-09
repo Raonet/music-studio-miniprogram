@@ -1,9 +1,10 @@
 import { CoolController, BaseController } from '@cool-midway/core';
 import { Body, Get, Inject, Post } from '@midwayjs/core';
 import { InjectEntityModel } from '@midwayjs/typeorm';
-import { Repository } from 'typeorm';
+import { Equal, Repository } from 'typeorm';
 import { MusicStudentEntity } from '../../entity/student';
 import { UserInfoEntity } from '../../../user/entity/info';
+import { UserLoginService } from '../../../user/service/login';
 
 /**
  * 学员管理 - Admin
@@ -18,6 +19,9 @@ export class AdminMusicStudentController extends BaseController {
 
   @InjectEntityModel(UserInfoEntity)
   userInfoEntity: Repository<UserInfoEntity>;
+
+  @Inject()
+  userLoginService: UserLoginService;
 
   /** 分页查询，带用户信息 */
   @Post('/page', { summary: '学员分页列表' })
@@ -80,15 +84,32 @@ export class AdminMusicStudentController extends BaseController {
     );
   }
 
-  /** 小程序用户列表（用于关联选择器） */
-  @Get('/userList', { summary: '小程序用户列表' })
-  async userList() {
-    const users = await this.userInfoEntity
+  /** 小程序用户列表（用于关联选择器）：只返回未被其他学员绑定的用户 */
+  @Post('/userList', { summary: '小程序用户列表' })
+  async userList(@Body() body: any) {
+    const currentStudentId = body?.studentId ? Number(body.studentId) : null;
+
+    // 找到已被绑定的 userId（排除当前编辑的学员自身）
+    const boundQb = this.studentEntity
+      .createQueryBuilder('s')
+      .select('s.userId', 'userId')
+      .where('s.userId IS NOT NULL');
+    if (currentStudentId) {
+      boundQb.andWhere('s.id != :id', { id: currentStudentId });
+    }
+    const boundRows = await boundQb.getRawMany();
+    const boundUserIds = boundRows.map(r => Number(r.userId)).filter(Boolean);
+
+    const qb = this.userInfoEntity
       .createQueryBuilder('u')
       .select(['u.id', 'u.nickName', 'u.avatarUrl', 'u.phone'])
-      .where('u.status = 1')
-      .orderBy('u.id', 'DESC')
-      .getMany();
+      .where('u.status = 1');
+
+    if (boundUserIds.length > 0) {
+      qb.andWhere('u.id NOT IN (:...boundIds)', { boundIds: boundUserIds });
+    }
+
+    const users = await qb.orderBy('u.id', 'DESC').getMany();
 
     return this.ok(
       users.map(u => ({
@@ -99,5 +120,40 @@ export class AdminMusicStudentController extends BaseController {
         label: `${u.nickName || '用户' + u.id}${u.phone ? '  ' + u.phone : ''}`,
       }))
     );
+  }
+
+  /** 新增学员，校验 userId 唯一，并同步创建系统用户 */
+  @Post('/add', { summary: '新增学员' })
+  // @ts-ignore
+  async add(@Body() body: any) {
+    if (body.userId) {
+      const exists = await this.studentEntity.findOneBy({ userId: Equal(Number(body.userId)) });
+      if (exists) return this.fail('该用户已绑定其他学员记录');
+    }
+    const result = await this.studentEntity.insert(body);
+    // 同步创建系统用户
+    if (body.userId) {
+      await this.userLoginService.syncSysUserByAppUserId(Number(body.userId)).catch(() => null);
+    }
+    return this.ok(result.identifiers[0]);
+  }
+
+  /** 编辑学员，校验 userId 唯一，并同步创建系统用户 */
+  @Post('/update', { summary: '编辑学员' })
+  // @ts-ignore
+  async update(@Body() body: any) {
+    if (body.userId && body.id) {
+      const exists = await this.studentEntity
+        .createQueryBuilder('s')
+        .where('s.userId = :userId AND s.id != :id', { userId: Number(body.userId), id: Number(body.id) })
+        .getOne();
+      if (exists) return this.fail('该用户已绑定其他学员记录');
+    }
+    await this.studentEntity.update(body.id, body);
+    // 同步创建系统用户
+    if (body.userId) {
+      await this.userLoginService.syncSysUserByAppUserId(Number(body.userId)).catch(() => null);
+    }
+    return this.ok();
   }
 }

@@ -12,7 +12,7 @@ import { MusicTeacherService } from '../../service/teacher';
  * 课程管理 - Admin
  */
 @CoolController({
-  api: ['delete', 'info', 'list', 'page'],
+  api: ['add', 'delete', 'update', 'info', 'list', 'page'],
   entity: MusicCourseEntity,
   pageQueryOp: {
     keyWordLikeFields: ['a.name', 'a.teacherName'],
@@ -48,7 +48,7 @@ export class AdminMusicCourseController extends BaseController {
   }
 
   /** 编辑课程，教师角色强制锁定自己为教师 */
-  @Put('/update', { summary: '编辑课程' })
+  @Post('/update', { summary: '编辑课程' })
   // @ts-ignore override with body param
   async update(@Body() body: any) {
     if (await this.musicTeacherService.isTeacher()) {

@@ -71,7 +71,6 @@ const Table = useTable({
 		{ label: '套餐名称', prop: 'name', minWidth: 130 },
 		{ label: '总课时', prop: 'totalLessons', minWidth: 80 },
 		{ label: '已用课时', prop: 'usedLessons', minWidth: 80 },
-		{ label: '有效期至', prop: 'expireDate', minWidth: 110 },
 		{ label: '状态', prop: 'status', dict: options.status, minWidth: 90 },
 		{ label: '创建时间', prop: 'createTime', sortable: 'desc', minWidth: 160 },
 		{ type: 'op', buttons: ['edit', 'delete'] }
@@ -112,14 +111,6 @@ const Upsert = useUpsert({
 			label: '总课时',
 			required: true,
 			component: { name: 'el-input-number', props: { min: 1, style: 'width:100%' } }
-		},
-		{
-			prop: 'expireDate',
-			label: '有效期至',
-			component: {
-				name: 'el-date-picker',
-				props: { type: 'date', valueFormat: 'YYYY-MM-DD', style: 'width:100%' }
-			}
 		},
 		{
 			prop: 'status',
