@@ -108,7 +108,7 @@ export class MusicStudentService extends BaseService {
       remainingLessons,
       // 用户基本信息
       nickName: userInfo?.nickName || '',
-      contactPhone: student.contactPhone || '',
+      contactPhone: userInfo?.phone || student.contactPhone || '',
       gender: userInfo?.gender ?? 0,
       avatarUrl: userInfo?.avatarUrl || '',
       package: pkg

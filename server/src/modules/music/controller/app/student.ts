@@ -34,11 +34,12 @@ export class AppMusicStudentController extends BaseController {
   ) {
     const userId = this.ctx.user.id;
 
-    // 更新 user_info（nickName、gender、avatarUrl）
+    // 更新 user_info（nickName、gender、avatarUrl、phone）
     const updateUser: any = {};
     if (nickName !== undefined) updateUser.nickName = nickName;
     if (gender !== undefined) updateUser.gender = gender;
     if (avatarUrl !== undefined) updateUser.avatarUrl = avatarUrl;
+    if (contactPhone !== undefined) updateUser.phone = contactPhone;
     if (Object.keys(updateUser).length > 0) {
       await this.userInfoEntity.update(userId, updateUser);
     }
