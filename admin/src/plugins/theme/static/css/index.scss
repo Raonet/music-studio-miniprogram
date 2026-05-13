@@ -29,4 +29,55 @@ html.dark {
 		background-size: 4px 4px;
 		backdrop-filter: saturate(50%) blur(4px);
 	}
+
+	// 暗黑模式下金色主题增强
+	.el-button--primary {
+		box-shadow: 0 2px 8px rgba(201, 168, 76, 0.2);
+
+		&:hover {
+			box-shadow: 0 4px 12px rgba(201, 168, 76, 0.35);
+		}
+	}
+
+	.el-card {
+		background-color: var(--el-bg-color-overlay);
+		border-color: rgba(201, 168, 76, 0.12);
+		box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+
+		&:hover {
+			border-color: rgba(201, 168, 76, 0.25);
+			box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+		}
+	}
+
+	.el-dialog {
+		background-color: var(--el-bg-color-overlay);
+		border-color: rgba(201, 168, 76, 0.15);
+		box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+
+		&__header {
+			border-bottom-color: rgba(201, 168, 76, 0.12);
+		}
+
+		&__footer {
+			border-top-color: rgba(201, 168, 76, 0.12);
+		}
+	}
+
+	.el-input__wrapper {
+		&.is-focus {
+			box-shadow: 0 0 0 2px rgba(201, 168, 76, 0.25) !important;
+		}
+	}
+
+	.el-tabs__active-bar {
+		background-color: var(--el-color-primary);
+		box-shadow: 0 0 8px rgba(201, 168, 76, 0.4);
+	}
+
+	.el-popper {
+		background-color: var(--el-bg-color-overlay) !important;
+		border-color: rgba(201, 168, 76, 0.15) !important;
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+	}
 }

@@ -15,50 +15,50 @@ export default (): ModuleConfig => {
 		options: {
 			name: 'default',
 
-			// 自定义主题色
-			// color: "#4165d7",
+			// 主题色：与小程序金色主题对齐
+			color: '#C9A84C',
 
 			// 主题列表
 			list: [
 				{
-					label: t('默认'),
+					label: t('暗金'),
 					name: 'default',
-					color: '#4165d7'
+					color: '#C9A84C'
 				},
 				{
-					label: t('翠绿'),
-					name: 'cuilv',
-					color: '#51C21A'
+					label: t('琥珀'),
+					name: 'hupo',
+					color: '#E2C07A'
+				},
+				{
+					label: t('铜棕'),
+					name: 'tongzong',
+					color: '#8B6914'
+				},
+				{
+					label: t('玫瑰金'),
+					name: 'meiguijin',
+					color: '#C4956A'
+				},
+				{
+					label: t('青铜'),
+					name: 'qingtong',
+					color: '#4CAF7D'
+				},
+				{
+					label: t('深蓝'),
+					name: 'shenlv',
+					color: '#4165d7'
 				},
 				{
 					label: t('紫檀'),
 					name: 'zitan',
-					color: '#d0378d'
-				},
-				{
-					label: t('金橙'),
-					name: 'jincheng',
-					color: '#FFA500'
-				},
-				{
-					label: t('樱桃'),
-					name: 'yingtao',
-					color: '#FF69B4'
-				},
-				{
-					label: t('薄荷'),
-					name: 'bohe',
-					color: '#3EB489'
-				},
-				{
-					label: t('青灰'),
-					name: 'qinghui',
-					color: '#708090'
+					color: '#9B59B6'
 				},
 				{
 					label: t('珊瑚'),
 					name: 'shanhu',
-					color: '#FF4500'
+					color: '#E05A5A'
 				}
 			]
 		},

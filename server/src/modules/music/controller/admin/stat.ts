@@ -5,6 +5,7 @@ import { InjectEntityModel } from '@midwayjs/typeorm';
 import { Repository } from 'typeorm';
 import { MusicScheduleEntity } from '../../entity/schedule';
 import { MusicStudentEntity } from '../../entity/student';
+import { MusicCourseEntity } from '../../entity/course';
 import { UserInfoEntity } from '../../../user/entity/info';
 
 /**
@@ -17,6 +18,9 @@ export class AdminMusicStatController extends BaseController {
 
   @InjectEntityModel(MusicStudentEntity)
   studentEntity: Repository<MusicStudentEntity>;
+
+  @InjectEntityModel(MusicCourseEntity)
+  courseEntity: Repository<MusicCourseEntity>;
 
   @InjectEntityModel(UserInfoEntity)
   userInfoEntity: Repository<UserInfoEntity>;
@@ -97,15 +101,32 @@ export class AdminMusicStatController extends BaseController {
     return this.ok(rows.map(r => ({ studentName: r.studentName || r.studentId, count: Number(r.count) })));
   }
 
-  /** 汇总统计（本月/本年节数、学员数、教师数） */
+  /** 汇总统计（本月/本年节数、学员数、教师数、课时费） */
   @Get('/summary', { summary: '汇总统计' })
   async summary() {
     const now = new Date();
     const year = now.getFullYear().toString();
     const month = String(now.getMonth() + 1).padStart(2, '0');
+    const today = `${year}-${month}-${String(now.getDate()).padStart(2, '0')}`;
+    const weekStart = (() => {
+      const d = new Date(now);
+      d.setDate(d.getDate() - d.getDay() + 1);
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    })();
     const monthPrefix = `${year}-${month}`;
 
-    const [monthCount, yearCount, studentCount, teacherCount] = await Promise.all([
+    const earningQuery = (where: string, params: object) =>
+      this.scheduleEntity
+        .createQueryBuilder('s')
+        .leftJoin(MusicCourseEntity, 'c', 'c.name = s.courseName AND c.status = 1')
+        .select('COALESCE(SUM(c.price), 0)', 'total')
+        .where('s.status = 1')
+        .andWhere(where, params)
+        .getRawOne()
+        .then(r => Number(r?.total || 0));
+
+    const [monthCount, yearCount, studentCount, teacherCount,
+      todayEarning, weekEarning, monthEarning, yearEarning] = await Promise.all([
       this.scheduleEntity.createQueryBuilder('s')
         .where("s.scheduleDate LIKE :p", { p: `${monthPrefix}%` })
         .andWhere('s.status = 1')
@@ -119,8 +140,13 @@ export class AdminMusicStatController extends BaseController {
         .select('COUNT(DISTINCT s.teacherName)', 'cnt')
         .where("s.teacherName IS NOT NULL AND s.teacherName != ''")
         .getRawOne().then(r => Number(r?.cnt || 0)),
+      earningQuery('s.scheduleDate = :d', { d: today }),
+      earningQuery('s.scheduleDate >= :d', { d: weekStart }),
+      earningQuery("s.scheduleDate LIKE :p", { p: `${monthPrefix}%` }),
+      earningQuery("s.scheduleDate LIKE :p", { p: `${year}-%` }),
     ]);
 
-    return this.ok({ monthCount, yearCount, studentCount, teacherCount });
+    return this.ok({ monthCount, yearCount, studentCount, teacherCount,
+      todayEarning, weekEarning, monthEarning, yearEarning });
   }
 }

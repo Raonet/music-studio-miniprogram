@@ -8,22 +8,16 @@ $border-radius: () !default;
 	$scrollbar: (),
 	$border-radius: map.merge(
 			(
-				'base': 5px
+				'base': 8px,
+				'small': 6px,
+				'round': 20px,
+				'circle': 100%
 			),
 			$border-radius
 		)
 );
 
 @use 'element-plus/theme-chalk/src/index.scss' as *;
-
-// Element-plus
-.el-input-number {
-	&__decrease,
-	&__increase {
-		border: 0 !important;
-		background-color: transparent;
-	}
-}
 
 .el-message,
 .el-overlay.is-message-box {
@@ -35,7 +29,9 @@ $border-radius: () !default;
 	&.el-message--error,
 	&.el-message--info,
 	&.el-message--warning {
-		border-radius: 6px;
+		border-radius: 10px;
+		border: 1px solid var(--el-border-color-lighter);
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
 	}
 
 	&__icon {
@@ -44,11 +40,13 @@ $border-radius: () !default;
 }
 
 .el-message-box {
-	border-radius: 12px;
-	padding: 20px;
+	border-radius: 16px;
+	padding: 24px;
+	border: 1px solid var(--el-border-color-lighter);
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.16);
 
 	&__header {
-		padding-bottom: 20px;
+		padding-bottom: 16px;
 	}
 
 	&__headerbtn {
@@ -88,39 +86,129 @@ $border-radius: () !default;
 }
 
 .el-dialog {
-	--el-dialog-box-shadow: none;
+	--el-dialog-box-shadow: 0 8px 32px rgba(0, 0, 0, 0.16);
+	border-radius: 16px !important;
+	border: 1px solid var(--el-border-color-lighter);
+
+	&__header {
+		padding: 20px 24px 16px;
+		border-bottom: 1px solid var(--el-border-color-lighter);
+		margin-right: 0;
+	}
+
+	&__body {
+		padding: 20px 24px;
+	}
+
+	&__footer {
+		padding: 16px 24px 20px;
+		border-top: 1px solid var(--el-border-color-lighter);
+	}
 }
 
 .el-button {
 	outline: none;
+	font-weight: 500;
+	transition: all 0.2s ease;
+
+	&--primary {
+		box-shadow: 0 2px 8px rgba(201, 168, 76, 0.3);
+
+		&:hover {
+			box-shadow: 0 4px 12px rgba(201, 168, 76, 0.4);
+			transform: translateY(-1px);
+		}
+
+		&:active {
+			transform: translateY(0);
+			box-shadow: 0 1px 4px rgba(201, 168, 76, 0.2);
+		}
+	}
 }
 
 .el-table {
+	border-radius: 8px;
+	overflow: hidden;
+
 	&__header {
 		.cell {
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
+			font-weight: 600;
+			font-size: 13px;
 		}
+	}
+
+	&__row {
+		transition: background-color 0.15s ease;
 	}
 }
 
 .el-popper {
-	border-radius: 6px;
+	border-radius: 10px;
+	border: 1px solid var(--el-border-color-lighter) !important;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
 
 	.el-scrollbar {
 		border-radius: inherit;
 	}
 
 	.el-dropdown-menu {
-		padding: 5px;
+		padding: 6px;
 
 		&__item {
 			border-radius: 6px;
+			transition: background-color 0.15s ease;
 		}
 	}
 
 	&__arrow {
 		display: none;
+	}
+}
+
+.el-card {
+	border-radius: 12px;
+	border: 1px solid var(--el-border-color-lighter);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+	transition: box-shadow 0.2s ease;
+
+	&:hover {
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+	}
+}
+
+.el-tag {
+	border-radius: 6px;
+	font-weight: 500;
+}
+
+.el-input {
+	&__wrapper {
+		border-radius: 8px;
+		transition: box-shadow 0.2s ease;
+
+		&.is-focus {
+			box-shadow: 0 0 0 2px rgba(201, 168, 76, 0.2) !important;
+		}
+	}
+}
+
+.el-select {
+	.el-input__wrapper {
+		border-radius: 8px;
+	}
+}
+
+.el-tabs {
+	&__item {
+		font-weight: 500;
+		transition: color 0.2s ease;
+	}
+
+	&__active-bar {
+		height: 3px;
+		border-radius: 3px;
 	}
 }
