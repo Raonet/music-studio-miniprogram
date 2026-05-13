@@ -19,6 +19,56 @@ $border-radius: () !default;
 
 @use 'element-plus/theme-chalk/src/index.scss' as *;
 
+// ── 暗金主题：在 Element Plus 之后覆盖所有 :root 变量 ──
+:root {
+	color-scheme: dark;
+	--el-bg-color: #16141f;
+	--el-bg-color-page: #13111a;
+	--el-bg-color-overlay: #1c1a26;
+	--el-fill-color-blank: #16141f;
+	--el-fill-color: rgba(201,168,76,0.06);
+	--el-fill-color-light: rgba(201,168,76,0.08);
+	--el-fill-color-lighter: rgba(201,168,76,0.04);
+	--el-fill-color-extra-light: rgba(201,168,76,0.02);
+	--el-fill-color-dark: rgba(201,168,76,0.12);
+	--el-fill-color-darker: rgba(201,168,76,0.16);
+	--el-text-color-primary: #F0EDE6;
+	--el-text-color-regular: #E8E0D0;
+	--el-text-color-secondary: #A89F8C;
+	--el-text-color-placeholder: rgba(168,159,140,0.5);
+	--el-text-color-disabled: rgba(168,159,140,0.3);
+	--el-border-color: rgba(201,168,76,0.2);
+	--el-border-color-light: rgba(201,168,76,0.15);
+	--el-border-color-lighter: rgba(201,168,76,0.1);
+	--el-border-color-extra-light: rgba(201,168,76,0.06);
+	--el-border-color-dark: rgba(201,168,76,0.25);
+	--el-border-color-darker: rgba(201,168,76,0.3);
+	--el-color-primary: #C9A84C;
+	--el-color-primary-light-3: #D4B96A;
+	--el-color-primary-light-5: #DCCA88;
+	--el-color-primary-light-7: #E8DAA6;
+	--el-color-primary-light-8: rgba(201,168,76,0.2);
+	--el-color-primary-light-9: rgba(201,168,76,0.1);
+	--el-color-primary-dark-2: #B8943A;
+	--el-disabled-bg-color: rgba(201,168,76,0.04);
+	--el-disabled-text-color: rgba(168,159,140,0.4);
+	--el-disabled-border-color: rgba(201,168,76,0.08);
+	--el-overlay-color: rgba(0,0,0,0.85);
+	--el-mask-color: rgba(14,13,20,0.9);
+	// 表格变量
+	--el-table-bg-color: #16141f;
+	--el-table-tr-bg-color: #16141f;
+	--el-table-header-bg-color: #1c1a26;
+	--el-table-row-hover-bg-color: rgba(201,168,76,0.07);
+	--el-table-current-row-bg-color: rgba(201,168,76,0.1);
+	--el-table-border-color: rgba(201,168,76,0.12);
+	--el-table-border: 1px solid rgba(201,168,76,0.12);
+	--el-table-text-color: #E8E0D0;
+	--el-table-header-text-color: #C9A84C;
+	--el-table-expanded-cell-bg-color: #16141f;
+	--el-table-fixed-box-shadow: none;
+}
+
 .el-message,
 .el-overlay.is-message-box {
 	z-index: 10000 !important;
@@ -211,4 +261,89 @@ $border-radius: () !default;
 		height: 3px;
 		border-radius: 3px;
 	}
+}
+
+// ── 暗金主题：表格深色强制覆盖 ──
+.el-table,
+.el-table tr {
+	background-color: #16141f !important;
+}
+
+// 行数据单元格：提亮文字、金色边框
+.el-table td.el-table__cell {
+	background-color: #16141f !important;
+	border-bottom: 1px solid rgba(201, 168, 76, 0.1) !important;
+	border-right: none !important;
+	color: #E8E0D0 !important;
+}
+
+// 表头：深色背景、金色底边
+.el-table th.el-table__cell {
+	background-color: #1c1a26 !important;
+	border-bottom: 1px solid rgba(201, 168, 76, 0.2) !important;
+	border-right: none !important;
+	color: #C9A84C !important;
+	font-weight: 600;
+	letter-spacing: 0.3px;
+}
+
+// hover 行
+.el-table__body tr.hover-row > td.el-table__cell,
+.el-table__body tr > td.hover-cell {
+	background-color: rgba(201, 168, 76, 0.07) !important;
+}
+
+// 固定列必须用实色背景，否则滚动时内容透视重叠
+.el-table__body-wrapper tr td.el-table-fixed-column--left,
+.el-table__body-wrapper tr td.el-table-fixed-column--right {
+	background-color: #16141f !important;
+}
+
+.el-table__header-wrapper tr th.el-table-fixed-column--left,
+.el-table__header-wrapper tr th.el-table-fixed-column--right {
+	background-color: #1c1a26 !important;
+}
+
+// hover 时固定列也要跟着变色
+.el-table__body tr.hover-row > td.el-table-fixed-column--left,
+.el-table__body tr.hover-row > td.el-table-fixed-column--right {
+	background-color: rgba(28, 26, 38, 0.98) !important;
+}
+
+// 硬编码 #fff 的固定右侧补丁
+.el-table__body-wrapper tr td.el-table__fixed-right-patch,
+.el-table__body-wrapper tr th.el-table__fixed-right-patch,
+.el-table__header-wrapper tr td.el-table__fixed-right-patch,
+.el-table__header-wrapper tr th.el-table__fixed-right-patch {
+	background-color: #1c1a26 !important;
+}
+
+// 表格外框线改为金色
+.el-table--border .el-table__inner-wrapper:after,
+.el-table--border:before,
+.el-table--border:after {
+	background-color: rgba(201, 168, 76, 0.15) !important;
+}
+
+// 左侧白线：inner-wrapper::before 是左边框伪元素，直接隐藏
+.el-table__inner-wrapper:before {
+	display: none !important;
+}
+
+.el-table--border .el-table__cell {
+	border-right: 1px solid rgba(201, 168, 76, 0.08) !important;
+}
+
+// 展开行、分组表头
+.el-table__expanded-cell {
+	background-color: #16141f !important;
+}
+
+.el-table thead.is-group th.el-table__cell {
+	background-color: #1c1a26 !important;
+}
+
+// 空数据提示
+.el-table__empty-text {
+	color: #A89F8C !important;
 }

@@ -214,15 +214,22 @@ onMounted(async () => {
 
 <style scoped>
 .schedule-teacher {
-	padding: 16px;
+	padding: 20px;
+	min-height: 100%;
+	background: linear-gradient(135deg, #0e0d14 0%, #13111a 50%, #16141f 100%);
 }
 
 .toolbar {
 	display: flex;
 	align-items: center;
-	gap: 12px;
+	gap: 10px;
 	margin-bottom: 16px;
 	flex-wrap: wrap;
+	padding: 12px 16px;
+	background: rgba(255, 255, 255, 0.03);
+	backdrop-filter: blur(12px);
+	border: 1px solid rgba(201, 168, 76, 0.12);
+	border-radius: 12px;
 }
 
 .week-nav {
@@ -232,20 +239,26 @@ onMounted(async () => {
 }
 
 .teacher-name-label {
-	font-size: 15px;
+	font-size: 14px;
 	font-weight: 600;
-	color: #303133;
+	color: #C9A84C;
 }
 
 .week-label {
-	font-size: 15px;
-	font-weight: 600;
+	font-size: 14px;
+	font-weight: 700;
 	min-width: 140px;
 	text-align: center;
+	color: #F0EDE6;
 }
 
+/* 周视图容器 */
 .week-wrap {
 	overflow-x: auto;
+	border-radius: 14px;
+	border: 1px solid rgba(201, 168, 76, 0.15);
+	background: rgba(255, 255, 255, 0.02);
+	backdrop-filter: blur(16px);
 }
 
 .week-table {
@@ -256,59 +269,78 @@ onMounted(async () => {
 
 .week-table th,
 .week-table td {
-	border: 1px solid #ebeef5;
+	border: 1px solid rgba(201, 168, 76, 0.08);
 	padding: 4px;
 	vertical-align: top;
 }
 
 .week-table th {
 	text-align: center;
-	background: #f5f7fa;
-	font-size: 13px;
-	color: #606266;
+	background: rgba(28, 26, 38, 0.9);
+	font-size: 12px;
+	font-weight: 600;
+	color: #A89F8C;
+	padding: 10px 4px;
+	border-bottom: 1px solid rgba(201, 168, 76, 0.2);
 }
 
 .week-table th.today {
-	background: #ecf5ff;
-	color: #409eff;
+	background: rgba(201, 168, 76, 0.12);
+	color: #C9A84C;
 }
 
 .date-sub {
-	font-size: 12px;
-	color: #909399;
+	font-size: 11px;
+	color: rgba(168, 159, 140, 0.7);
 	font-weight: normal;
+	margin-top: 2px;
 }
 
 .time-col {
-	width: 56px;
+	width: 52px;
 	text-align: center;
-	font-size: 11px;
-	color: #909399;
+	font-size: 10px;
+	color: rgba(168, 159, 140, 0.5);
 	white-space: nowrap;
+	background: rgba(28, 26, 38, 0.6) !important;
 }
 
 .slot-cell {
-	min-height: 32px;
+	min-height: 28px;
 	padding: 2px;
+	background: transparent;
+	transition: background 0.1s;
 }
 
+.slot-cell:hover {
+	background: rgba(201, 168, 76, 0.03);
+}
+
+/* 课程块 */
 .lesson-block {
-	border-radius: 4px;
-	padding: 3px 5px;
+	border-radius: 5px;
+	padding: 4px 6px;
 	margin-bottom: 2px;
 	cursor: pointer;
 	font-size: 11px;
 	line-height: 1.4;
+	transition: opacity 0.15s, transform 0.15s;
 }
 
-.lesson-student { font-weight: 600; }
-.lesson-course  { color: inherit; opacity: 0.85; }
-.lesson-time    { opacity: 0.7; }
+.lesson-block:hover {
+	opacity: 0.85;
+	transform: translateY(-1px);
+}
 
-.color-a { background: #ecf5ff; color: #409eff; border-left: 3px solid #409eff; }
-.color-b { background: #f0f9eb; color: #67c23a; border-left: 3px solid #67c23a; }
-.color-c { background: #fdf6ec; color: #e6a23c; border-left: 3px solid #e6a23c; }
-.color-d { background: #fef0f0; color: #f56c6c; border-left: 3px solid #f56c6c; }
-.color-e { background: #f4f4f5; color: #909399; border-left: 3px solid #909399; }
-.color-f { background: #f0f0ff; color: #7c4dff; border-left: 3px solid #7c4dff; }
+.lesson-student { font-weight: 700; }
+.lesson-course  { opacity: 0.85; }
+.lesson-time    { opacity: 0.65; font-size: 10px; }
+
+/* 学员颜色 — 暗金系 */
+.color-a { background: rgba(201,168,76,0.15);  color: #C9A84C;  border-left: 2px solid #C9A84C; }
+.color-b { background: rgba(76,175,125,0.15);  color: #4CAF7D;  border-left: 2px solid #4CAF7D; }
+.color-c { background: rgba(226,192,122,0.15); color: #E2C07A;  border-left: 2px solid #E2C07A; }
+.color-d { background: rgba(224,90,90,0.15);   color: #E05A5A;  border-left: 2px solid #E05A5A; }
+.color-e { background: rgba(139,105,20,0.2);   color: #B8943A;  border-left: 2px solid #B8943A; }
+.color-f { background: rgba(168,130,200,0.15); color: #A882C8;  border-left: 2px solid #A882C8; }
 </style>

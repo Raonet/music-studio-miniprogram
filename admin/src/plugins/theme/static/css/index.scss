@@ -3,81 +3,72 @@
 	animation: none !important;
 }
 
-html.dark {
-	&::view-transition-old(root) {
-		z-index: 100;
-	}
+// cl-crud 内容区深色适配
+.cl-crud {
+	background-color: transparent !important;
 
-	.app-slider {
-		--slider-bg-color: var(--el-bg-color);
-		--slider-text-color: var(--el-text-color-primary);
-	}
-
-	.cl-crud {
-		background-color: var(--el-bg-color);
-
-		.el-table {
-			&__header {
-				.el-table__cell {
-					background-color: var(--el-bg-color) !important;
-				}
+	.el-table {
+		&__header {
+			.el-table__cell {
+				background-color: rgba(28, 26, 38, 0.8) !important;
 			}
 		}
 	}
+}
 
-	.el-overlay {
-		background-size: 4px 4px;
-		backdrop-filter: saturate(50%) blur(4px);
+// 暗金主题增强
+.el-button--primary {
+	box-shadow: 0 2px 8px rgba(201, 168, 76, 0.2);
+	color:#E8E0D0!important;
+
+	&:hover {
+		box-shadow: 0 4px 12px rgba(201, 168, 76, 0.35);
 	}
+}
 
-	// 暗黑模式下金色主题增强
-	.el-button--primary {
-		box-shadow: 0 2px 8px rgba(201, 168, 76, 0.2);
+.el-card {
+	background-color: rgba(28, 26, 38, 0.6) !important;
+	border-color: rgba(201, 168, 76, 0.12) !important;
+	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3) !important;
 
-		&:hover {
-			box-shadow: 0 4px 12px rgba(201, 168, 76, 0.35);
-		}
-	}
-
-	.el-card {
-		background-color: var(--el-bg-color-overlay);
-		border-color: rgba(201, 168, 76, 0.12);
-		box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
-
-		&:hover {
-			border-color: rgba(201, 168, 76, 0.25);
-			box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-		}
-	}
-
-	.el-dialog {
-		background-color: var(--el-bg-color-overlay);
-		border-color: rgba(201, 168, 76, 0.15);
-		box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
-
-		&__header {
-			border-bottom-color: rgba(201, 168, 76, 0.12);
-		}
-
-		&__footer {
-			border-top-color: rgba(201, 168, 76, 0.12);
-		}
-	}
-
-	.el-input__wrapper {
-		&.is-focus {
-			box-shadow: 0 0 0 2px rgba(201, 168, 76, 0.25) !important;
-		}
-	}
-
-	.el-tabs__active-bar {
-		background-color: var(--el-color-primary);
-		box-shadow: 0 0 8px rgba(201, 168, 76, 0.4);
-	}
-
-	.el-popper {
-		background-color: var(--el-bg-color-overlay) !important;
-		border-color: rgba(201, 168, 76, 0.15) !important;
+	&:hover {
+		border-color: rgba(201, 168, 76, 0.25) !important;
 		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
 	}
+}
+
+.el-dialog {
+	background-color: #1c1a26 !important;
+	border: 1px solid rgba(201, 168, 76, 0.15);
+	box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5) !important;
+
+	&__header {
+		border-bottom: 1px solid rgba(201, 168, 76, 0.1);
+	}
+
+	&__footer {
+		border-top: 1px solid rgba(201, 168, 76, 0.1);
+	}
+}
+
+.el-input__wrapper {
+	&.is-focus {
+		box-shadow: 0 0 0 2px rgba(201, 168, 76, 0.25) !important;
+	}
+}
+
+.el-tabs__active-bar {
+	background-color: #C9A84C;
+	box-shadow: 0 0 8px rgba(201, 168, 76, 0.4);
+}
+
+.el-popper {
+	background-color: #1c1a26 !important;
+	border-color: rgba(201, 168, 76, 0.15) !important;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+.el-drawer {
+	background-color: #1c1a26 !important;
+	border-left: 1px solid rgba(201, 168, 76, 0.12) !important;
 }

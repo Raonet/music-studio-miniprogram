@@ -29,15 +29,9 @@ const { app } = useBase();
 </script>
 
 <style lang="scss" scoped>
-.app-global {
-	position: absolute;
-	left: 0;
-	top: 0;
-}
-
 .app-layout {
 	display: flex;
-	background-color: var(--bg-color);
+	background: linear-gradient(135deg, #0e0d14 0%, #13111a 50%, #16141f 100%);
 	height: 100%;
 	width: 100%;
 	overflow: hidden;
@@ -47,6 +41,7 @@ const { app } = useBase();
 		height: 100%;
 		width: 255px;
 		transition: left 0.2s;
+		flex-shrink: 0;
 	}
 
 	&__right {
@@ -60,7 +55,8 @@ const { app } = useBase();
 		position: fixed;
 		left: 0;
 		top: 0;
-		background-color: rgba(0, 0, 0, 0.5);
+		background-color: rgba(0, 0, 0, 0.6);
+		backdrop-filter: blur(4px);
 		height: 100%;
 		width: 100%;
 		z-index: 999;

@@ -561,15 +561,24 @@ onMounted(async () => {
 
 <style scoped>
 .schedule-calendar {
-	padding: 16px;
+	padding: 20px;
+	min-height: 100%;
+	background: linear-gradient(135deg, #0e0d14 0%, #13111a 50%, #16141f 100%);
+	position: relative;
 }
 
+/* 工具栏 */
 .toolbar {
 	display: flex;
 	align-items: center;
-	gap: 12px;
+	gap: 10px;
 	margin-bottom: 16px;
 	flex-wrap: wrap;
+	padding: 12px 16px;
+	background: rgba(255, 255, 255, 0.03);
+	backdrop-filter: blur(12px);
+	border: 1px solid rgba(201, 168, 76, 0.12);
+	border-radius: 12px;
 }
 
 .month-nav {
@@ -579,20 +588,28 @@ onMounted(async () => {
 }
 
 .month-label {
-	font-size: 16px;
-	font-weight: 600;
-	min-width: 120px;
+	font-size: 15px;
+	font-weight: 700;
+	min-width: 130px;
 	text-align: center;
+	color: #F0EDE6;
+	letter-spacing: 0.5px;
 }
 
 .teacher-name-label {
-	font-size: 15px;
+	font-size: 14px;
 	font-weight: 600;
-	color: #303133;
+	color: #C9A84C;
+	padding: 0 4px;
 }
 
+/* 日历容器 */
 .calendar-wrap {
 	overflow-x: auto;
+	border-radius: 14px;
+	border: 1px solid rgba(201, 168, 76, 0.15);
+	background: rgba(255, 255, 255, 0.02);
+	backdrop-filter: blur(16px);
 }
 
 .cal-table {
@@ -601,45 +618,58 @@ onMounted(async () => {
 	table-layout: fixed;
 }
 
+/* 表头 */
 .cal-table th {
-	padding: 8px 4px;
+	padding: 10px 4px;
 	text-align: center;
-	font-size: 13px;
-	color: #606266;
-	border-bottom: 1px solid #ebeef5;
+	font-size: 12px;
+	font-weight: 600;
+	color: #C9A84C;
+	letter-spacing: 0.5px;
+	background: rgba(28, 26, 38, 0.8);
+	border-bottom: 1px solid rgba(201, 168, 76, 0.2);
 }
 
+/* 日历格子 */
 .cal-cell {
 	vertical-align: top;
-	border: 1px solid #ebeef5;
+	border: 1px solid rgba(201, 168, 76, 0.07);
 	min-height: 100px;
-	padding: 4px;
+	padding: 6px;
 	cursor: pointer;
-	transition: background 0.15s;
+	transition: background 0.15s ease;
+	background: transparent;
 }
 
 .cal-cell:hover {
-	background: #f5f7fa;
+	background: rgba(201, 168, 76, 0.05);
 }
 
 .cal-cell.other-month {
-	background: #fafafa;
+	background: rgba(0, 0, 0, 0.15);
 }
 
+.cal-cell.other-month .cell-date {
+	color: rgba(168, 159, 140, 0.3);
+}
+
+/* 今天高亮 */
 .cal-cell.today .cell-date {
-	background: #409eff;
-	color: #fff;
+	background: linear-gradient(135deg, #C9A84C, #8B6914);
+	color: #0e0d14;
 	border-radius: 50%;
 	width: 24px;
 	height: 24px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	font-weight: 700;
+	box-shadow: 0 0 10px rgba(201, 168, 76, 0.4);
 }
 
 .cell-date {
-	font-size: 13px;
-	color: #303133;
+	font-size: 12px;
+	color: #E8E0D0;
 	margin-bottom: 4px;
 	width: 24px;
 	height: 24px;
@@ -648,33 +678,30 @@ onMounted(async () => {
 	justify-content: center;
 }
 
-.other-month .cell-date {
-	color: #c0c4cc;
-}
-
 .cell-lessons {
 	display: flex;
 	flex-direction: column;
 	gap: 2px;
 }
 
+/* 课程标签 */
 .lesson-tag {
 	font-size: 11px;
-	padding: 2px 4px;
-	border-radius: 3px;
+	padding: 2px 6px;
+	border-radius: 4px;
 	cursor: pointer;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+	transition: opacity 0.15s;
+	border-left: 2px solid currentColor;
 }
 
-.lesson-tag:hover {
-	opacity: 0.8;
-}
+.lesson-tag:hover { opacity: 0.8; }
 
-.status-pending  { background: #ecf5ff; color: #409eff; }
-.status-done     { background: #f0f9eb; color: #67c23a; }
-.status-leave    { background: #fdf6ec; color: #e6a23c; }
-.status-makeup   { background: #f4f4f5; color: #909399; }
-.status-cancel   { background: #fef0f0; color: #f56c6c; text-decoration: line-through; }
+.status-pending { background: rgba(201,168,76,0.12); color: #C9A84C; }
+.status-done    { background: rgba(76,175,125,0.12); color: #4CAF7D; }
+.status-leave   { background: rgba(226,192,122,0.12); color: #E2C07A; }
+.status-makeup  { background: rgba(168,159,140,0.1);  color: #A89F8C; }
+.status-cancel  { background: rgba(224,90,90,0.1);    color: #E05A5A; text-decoration: line-through; }
 </style>

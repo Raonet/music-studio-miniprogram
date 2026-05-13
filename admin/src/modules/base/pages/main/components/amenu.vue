@@ -117,35 +117,32 @@ watch(
 	&__item {
 		display: flex;
 		align-items: center;
-		height: 32px;
-		padding: 0 16px 0 12px;
-		border: 0;
-		color: var(--el-color-info);
+		height: 30px;
+		padding: 0 14px 0 10px;
+		border: 1px solid transparent;
+		color: #A89F8C;
 		position: relative;
 		background-color: transparent;
-		border-radius: 6px;
+		border-radius: 8px;
 		cursor: pointer;
-		border: 1px solid transparent;
-		margin-right: 6px;
-		transition: all 0.3s;
+		margin-right: 4px;
+		transition: all 0.2s ease;
+		font-size: 13px;
 
 		&.is-active {
-			border-color: var(--el-color-primary-light-8);
-			color: var(--el-color-primary);
+			border-color: rgba(201, 168, 76, 0.3);
+			color: #C9A84C;
+			background: rgba(201, 168, 76, 0.1);
 		}
 
-		&.is-active,
-		&:hover {
-			background-color: var(--el-color-primary-light-9);
+		&:hover:not(.is-active) {
+			background-color: rgba(201, 168, 76, 0.06);
+			color: #F0EDE6;
 		}
 
 		&:last-child {
 			margin-right: 0;
 		}
-	}
-
-	&__name {
-		margin-left: 8px;
 	}
 }
 </style>

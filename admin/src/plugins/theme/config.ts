@@ -1,75 +1,41 @@
 import { type ModuleConfig } from '/@/cool';
 import 'element-plus/theme-chalk/dark/css-vars.css';
 import './static/css/index.scss';
-import { t } from '/#/i18n';
-import { useTheme } from './hooks';
 
 export default (): ModuleConfig => {
 	return {
 		enable: true,
 		order: 99,
-		toolbar: {
-			component: import('./components/theme.vue'),
-			h5: false
-		},
 		options: {
 			name: 'default',
-
-			// 主题色：与小程序金色主题对齐
 			color: '#C9A84C',
-
-			// 主题列表
-			list: [
-				{
-					label: t('暗金'),
-					name: 'default',
-					color: '#C9A84C'
-				},
-				{
-					label: t('琥珀'),
-					name: 'hupo',
-					color: '#E2C07A'
-				},
-				{
-					label: t('铜棕'),
-					name: 'tongzong',
-					color: '#8B6914'
-				},
-				{
-					label: t('玫瑰金'),
-					name: 'meiguijin',
-					color: '#C4956A'
-				},
-				{
-					label: t('青铜'),
-					name: 'qingtong',
-					color: '#4CAF7D'
-				},
-				{
-					label: t('深蓝'),
-					name: 'shenlv',
-					color: '#4165d7'
-				},
-				{
-					label: t('紫檀'),
-					name: 'zitan',
-					color: '#9B59B6'
-				},
-				{
-					label: t('珊瑚'),
-					name: 'shanhu',
-					color: '#E05A5A'
-				}
-			]
 		},
 		install() {
-			useTheme();
+			// 固定暗金主题，直接设置主色变量
+			const pre = '--el-color-primary';
+			const color = '#C9A84C';
+			const el = document.documentElement;
+			el.style.setProperty(pre, color);
+			const mixWhite = '#ffffff';
+			const mixBlack = '#131313';
+			const mix = (c1: string, c2: string, w: number) => {
+				const r1 = parseInt(c1.slice(1,3),16), g1 = parseInt(c1.slice(3,5),16), b1 = parseInt(c1.slice(5,7),16);
+				const r2 = parseInt(c2.slice(1,3),16), g2 = parseInt(c2.slice(3,5),16), b2 = parseInt(c2.slice(5,7),16);
+				const r = Math.round(r1*(1-w)+r2*w).toString(16).padStart(2,'0');
+				const g = Math.round(g1*(1-w)+g2*w).toString(16).padStart(2,'0');
+				const b = Math.round(b1*(1-w)+b2*w).toString(16).padStart(2,'0');
+				return '#'+r+g+b;
+			};
+			for (let i = 1; i < 10; i++) {
+				el.style.setProperty(`${pre}-light-${i}`, mix(color, mixWhite, i * 0.1));
+				el.style.setProperty(`${pre}-dark-${i}`, mix(color, mixBlack, i * 0.1));
+			}
 		},
 
 		label: '主题',
-		description: '自定义主色、菜单分组、暗黑模式',
+		description: '暗金主题',
 		author: 'COOL',
-		version: '1.0.0',
-		updateTime: '2024-07-22'
+		version: '2.0.0',
+		updateTime: '2026-05-13'
 	};
 };

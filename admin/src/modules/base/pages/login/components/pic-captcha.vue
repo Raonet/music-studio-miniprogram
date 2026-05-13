@@ -42,7 +42,7 @@ async function refresh() {
 		.captcha({
 			height: 45,
 			width: 150,
-			color: '#2c3142'
+			color: '#C9A84C'
 		})
 		.then(({ captchaId, data }) => {
 			if (data) {
@@ -88,23 +88,40 @@ defineExpose({
 	justify-content: center;
 	align-items: center;
 	cursor: pointer;
-	height: 45px;
-	width: 150px;
+	height: 42px;
+	width: 120px;
 	position: relative;
 	user-select: none;
+	border-radius: 8px;
+	overflow: hidden;
+	background: rgba(201, 168, 76, 0.08);
+	border: 1px solid rgba(201, 168, 76, 0.2);
+	transition: border-color 0.2s, opacity 0.2s;
+
+	&:hover {
+		border-color: rgba(201, 168, 76, 0.4);
+		opacity: 0.9;
+	}
 
 	.svg {
 		height: 100%;
+		width: 100%;
 		position: relative;
+
+		:deep(svg) {
+			height: 100%;
+			width: 100%;
+		}
 	}
 
 	.base64 {
 		height: 100%;
+		width: 100%;
+		object-fit: cover;
 	}
 
 	.is-loading {
-		position: absolute;
-		right: 15px;
+		color: rgba(201, 168, 76, 0.6);
 	}
 }
 </style>

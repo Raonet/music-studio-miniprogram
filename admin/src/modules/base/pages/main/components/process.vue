@@ -187,8 +187,11 @@ onMounted(() => {
 	position: relative;
 	padding: 5px 10px;
 	user-select: none;
-	background-color: var(--el-bg-color);
-	margin-bottom: 10px;
+	background: rgba(14, 13, 20, 0.7);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	border-bottom: 1px solid rgba(201, 168, 76, 0.1);
+	margin-bottom: 8px;
 	overflow: hidden;
 
 	&__op {
@@ -226,23 +229,27 @@ onMounted(() => {
 		align-items: center;
 		justify-content: space-between;
 		height: 26px;
-		padding: 0 8px;
+		padding: 0 10px;
 		cursor: pointer;
-		color: var(--el-text-color-regular);
-		border-radius: var(--el-border-radius-base);
-		margin-right: 5px;
-		border: 1px solid var(--el-fill-color-dark);
+		color: #A89F8C;
+		border-radius: 6px;
+		margin-right: 4px;
+		border: 1px solid rgba(201, 168, 76, 0.1);
+		background: rgba(201, 168, 76, 0.04);
+		transition: all 0.15s ease;
 
 		.close {
 			width: 0;
 			overflow: hidden;
-			transition: width 0.2s ease-in-out;
-			font-size: 14px;
-			border-radius: 4px;
+			transition: width 0.2s ease-in-out, opacity 0.2s;
+			font-size: 12px;
+			border-radius: 3px;
 			opacity: 0;
+			color: #A89F8C;
 
 			&:hover {
-				background-color: rgba(0, 0, 0, 0.1);
+				background-color: rgba(201, 168, 76, 0.15);
+				color: #C9A84C;
 			}
 		}
 
@@ -256,19 +263,22 @@ onMounted(() => {
 		}
 
 		&:hover:not(.active) {
-			background-color: var(--el-fill-color-light);
+			background-color: rgba(201, 168, 76, 0.08);
+			border-color: rgba(201, 168, 76, 0.2);
+			color: #F0EDE6;
 		}
 
 		&.active {
-			background-color: var(--el-color-primary);
-			border-color: var(--el-color-primary);
-			color: #fff;
+			background: linear-gradient(135deg, rgba(201,168,76,0.2), rgba(201,168,76,0.08));
+			border-color: rgba(201, 168, 76, 0.4);
+			color: #C9A84C;
+			box-shadow: 0 2px 8px rgba(201, 168, 76, 0.1);
 		}
 
 		&:hover,
 		&.active {
 			.close {
-				margin-left: 10px;
+				margin-left: 8px;
 				margin-right: -2px;
 				width: 14px;
 				opacity: 1;

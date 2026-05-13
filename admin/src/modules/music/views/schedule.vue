@@ -111,7 +111,8 @@ const Table = useTable({
 		{ label: '状态', prop: 'status', dict: options.status, minWidth: 90 },
 		{
 			type: 'op',
-			width: 220,
+			width: 260,
+			fixed: 'right',
 			buttons: [{ name: 'slot-finish' }, 'edit', 'delete']
 		}
 	]

@@ -55,8 +55,10 @@ onUnmounted(() => {
 	margin: 0 10px 10px 10px;
 	width: calc(100% - 20px);
 	box-sizing: border-box;
-	border-radius: 6px;
+	border-radius: 12px;
 	position: relative;
+	background: rgba(255, 255, 255, 0.02);
+	border: 1px solid rgba(201, 168, 76, 0.08);
 
 	.none-enter-active {
 		position: absolute;
